@@ -1,0 +1,77 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;
+}
+.conservation {
+    height: 500px;
+    width: 400px;
+    display: flex;
+    background-color: rgb(235 236 240);
+    flex-direction: column;
+}
+.heading{
+    height: 50px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 1px solid rgb(217 217 217);
+    background: white;
+    padding-left: 15px;
+}
+.heading-avatar img {
+    height: 40px;
+    width: 40px;
+    display: block;
+    border-radius: 50%;
+}
+.heading-text{
+    padding-left: 10px;
+    justify-content: center;
+    align-items: center;
+}
+.message{
+    width: fit-content;
+    height: fit-content;
+    background-color: rgb(229 241 255);
+    margin-left: auto;
+    padding: 5px 5px;
+    margin-right: 10px;
+    border: 1px solid rgb(103 166 255);
+    border-radius: 5px;
+    margin-top: 10px;
+    font-size: 15px;
+}
+.message .time-send{
+    font-size: 10px;
+    color: rgb(81 96 122);
+    text-align: left;
+}
+.reply{
+    margin-top: auto;
+    display: flex;
+    height: 50px;
+    width: 100%;
+    border: 1px solid rgb(217 217 217);
+    background-color: white;
+    align-items: center;
+}
+.form-control{
+    display: block;
+    width: 300px;
+    border: 1px solid rgb(103 166 255);
+    padding: 10px 5px;
+    border-radius: 5px;
+    outline: none;
+}
+.emojis{
+    padding: 10px 10px;
+    cursor: pointer;
+}
+.reply-send{
+    padding-left: 20px;
+    cursor: pointer;
+}
+
+

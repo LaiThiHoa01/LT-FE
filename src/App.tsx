@@ -1,12 +1,19 @@
 import './App.css'
-import SignIn from "./auth/signIn/SignIn.tsx";
+import Conservation from "./components/Conservation.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 
 function App() {
+
   return (
     <>
-      <SignIn/>
-      <Sidebar/>
+        <div className="app-layout">
+            <aside className="sidebar-container">
+                <Sidebar />
+            </aside>
+            <div className="main-content">
+                <Conservation/>
+            </div>
+        </div>
     </>
   )
 }
