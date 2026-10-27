@@ -1,5 +1,5 @@
 import './chat.css'
-import avatarImg from './img/woman_7185906.png'
+import avatarImg from '../chat/img/woman_7185906.png'
 export default function Conservation(){
     return(<>
             <div className="conservation">
