@@ -1,0 +1,68 @@
+.root{
+    --background-color: rgba(0,0,0,0);
+
+}
+.signUp{
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+    place-content: center;
+    place-items: center;
+    flex-grow: 1;
+}
+h1{
+    font-size: 30px;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+.input{
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+}
+input{
+    border-radius: 10px;
+    border: 1px solid #83a5af;
+    background-color: rgba(0,0,0,0);
+    height: 40px;
+    width: 500px;
+    padding-left: 10px;
+    font-size: 14px;
+    outline: #1f2028;
+}
+.name, .email, .sdt, .pass, .passAgain{
+    flex-direction: column;
+    display: flex;
+    gap:5px;
+}
+span{
+    text-align: left;
+    margin: 5px;
+    font-weight: 500;
+
+}
+.btn{
+    flex-direction: column;
+    display: flex;
+    gap: 10px;
+}
+button{
+    height: 35px;
+    width: 500px;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: 200;
+    cursor: pointer;
+}
+#signUp{
+    background-color: #007bff;
+    color: white;
+}
+#had{
+    background-color: rgba(0,0,0,0);
+    color: white;
+}
+
