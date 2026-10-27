@@ -1,6 +1,9 @@
 import './chat.css'
 import avatarImg from '../chat/img/woman_7185906.png'
+import {useState} from "react";
+import EmojiPicker from "emoji-picker-react";
 export default function Conservation(){
+    const [showPicker, setShowPicker] = useState(false);
     return(<>
             <div className="conservation">
                 <div className="heading">
@@ -21,8 +24,13 @@ export default function Conservation(){
                         <div className="time-send"> 20:00</div>
                     </div>
                 </div>
+                {showPicker && (
+                    <div className="emoji-picker">
+                        <EmojiPicker width={300} height={350} />
+                    </div>
+                )}
                 <div className="reply">
-                    <div className="emojis">
+                    <div className="emojis" onClick={() => setShowPicker(!showPicker)}>
                         <i className="fa-regular fa-face-grin"></i>
                     </div>
                     <div className="reply-main">
