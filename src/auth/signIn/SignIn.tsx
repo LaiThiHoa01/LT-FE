@@ -7,8 +7,8 @@ export default function SignIn(){
                     <h1>APP CHAT</h1>
                 </div>
                 <div className="input">
-                    <input type="text" value="Số di động hoặc email"/>
-                    <input type="text" value="Mật khẩu"/>
+                    <input type="text" placeholder="Số di động hoặc email"/>
+                    <input type="text" placeholder="Mật khẩu"/>
                 </div>
                 <div className="btn">
                     <button id="signIn">Đăng nhập</button>
