@@ -68,10 +68,16 @@
 .emojis{
     padding: 10px 10px;
     cursor: pointer;
+    position: relative;
 }
 .reply-send{
     padding-left: 20px;
     cursor: pointer;
+}
+.emoji-picker{
+    position: absolute;
+    top: 260px;
+    z-index: 1000;
 }
 
 
