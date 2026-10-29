@@ -1,9 +1,49 @@
 import './chat.css'
-import avatarImg from '../chat/img/woman_7185906.png'
+import avatarImg from '../assets/woman_7185906.png'
 import {useState} from "react";
 import EmojiPicker from "emoji-picker-react";
+interface Message {
+    id: number | string;
+    senderId: string | number;
+    text: string;
+    time: string;
+    isMe: boolean;
+}
 export default function Conservation(){
     const [showPicker, setShowPicker] = useState(false);
+    const [messages, setMessages] = useState<Message[]>([
+        {
+            id: 1,
+            senderId: 2,
+            text: "Hello, how r u?",
+            time: "20:00",
+            isMe: false
+        },
+        {
+            id: 2,
+            senderId: 1,
+            text: "Hello",
+            time: "20:00",
+            isMe: true
+        }
+    ]);
+    const [inputText, setInputText] = useState("");
+    const sendMessage = () => {
+        if(inputText.trim()){
+            const newMessage: Message = {
+                id:crypto.randomUUID(),
+                senderId:1,
+                text:inputText,
+                time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
+                isMe: true
+            };
+            setMessages([...messages, newMessage]);
+            setInputText("");
+        }
+    }
+    const sendEmoji = (emoji: any) => {
+        setInputText(prev => prev + emoji.emoji);
+    };
     return(<>
             <div className="conservation">
                 <div className="heading">
@@ -15,18 +55,17 @@ export default function Conservation(){
                     </div>
                 </div>
                 <div className="message-send">
-                    <div className="message">
-                        <span> Hello, how r u?</span>
-                        <div className="time-send"> 20:00</div>
-                    </div>
-                    <div className="message">
-                        <span> Hello</span>
-                        <div className="time-send"> 20:00</div>
-                    </div>
+                    {messages.map((msg) =>(
+                        <div key={msg.id}
+                             className ={msg.isMe ? "message my-message" : "message other-message"}>
+                            <span>{msg.text}</span>
+                            <div className="time-send"> {msg.time}</div>
+                        </div>
+                    ))}
                 </div>
                 {showPicker && (
                     <div className="emoji-picker">
-                        <EmojiPicker width={300} height={350} />
+                        <EmojiPicker width={300} height={350} onEmojiClick={sendEmoji} />
                     </div>
                 )}
                 <div className="reply">
@@ -35,10 +74,16 @@ export default function Conservation(){
                     </div>
                     <div className="reply-main">
                         <label>
-                            <input className="form-control" type="text" placeholder="Type your message here"/>
+                            <input  className="form-control" type="text" placeholder="Type your message here" value={inputText} onChange={(e) => setInputText(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === "Enter") {
+                                            e.preventDefault();
+                                            sendMessage();
+                                        }
+                                    }} ></input>
                         </label>
                     </div>
-                    <div className="reply-send">
+                    <div className="reply-send" onClick={sendMessage}>
                         <i className="fa-regular fa-paper-plane"></i>
                     </div>
                 </div>

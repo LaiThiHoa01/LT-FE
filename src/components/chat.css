@@ -79,5 +79,7 @@
     top: 260px;
     z-index: 1000;
 }
-
+.message-send{
+    overflow-y: auto;
+}
 
