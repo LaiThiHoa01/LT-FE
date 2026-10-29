@@ -1,5 +1,5 @@
 import User from "./User.tsx";
-import avatarImg from '../assets/woman_7185906.png'
+import avatarImg from '../../assets/woman_7185906.png'
 
 export default function ListUser() {
     const users = [

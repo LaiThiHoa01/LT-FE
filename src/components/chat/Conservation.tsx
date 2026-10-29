@@ -1,5 +1,5 @@
 import './chat.css'
-import avatarImg from '../assets/woman_7185906.png'
+import avatarImg from '../../assets/woman_7185906.png'
 import {useState} from "react";
 import EmojiPicker from "emoji-picker-react";
 interface Message {
@@ -11,22 +11,7 @@ interface Message {
 }
 export default function Conservation(){
     const [showPicker, setShowPicker] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([
-        {
-            id: 1,
-            senderId: 2,
-            text: "Hello, how r u?",
-            time: "20:00",
-            isMe: false
-        },
-        {
-            id: 2,
-            senderId: 1,
-            text: "Hello",
-            time: "20:00",
-            isMe: true
-        }
-    ]);
+    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState("");
     const sendMessage = () => {
         if(inputText.trim()){

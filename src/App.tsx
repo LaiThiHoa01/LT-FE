@@ -1,6 +1,6 @@
 import './App.css'
-import Conservation from "./components/Conservation.tsx";
-import Sidebar from "./components/Sidebar.tsx";
+import Conservation from "./components/chat/Conservation.tsx";
+import Sidebar from "./components/chat/Sidebar.tsx";
 
 function App() {
 
