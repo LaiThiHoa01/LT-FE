@@ -1,7 +1,8 @@
 import './chat.css'
 import avatarImg from '../../assets/woman_7185906.png'
-import {useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
+
 interface Message {
     id: number | string;
     senderId: string | number;
@@ -9,10 +10,21 @@ interface Message {
     time: string;
     isMe: boolean;
 }
-export default function Conservation(){
+
+export default function Conversation() {
     const [showPicker, setShowPicker] = useState(false);
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState("");
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     const sendMessage = () => {
         if(inputText.trim()){
             const newMessage: Message = {
@@ -26,11 +38,14 @@ export default function Conservation(){
             setInputText("");
         }
     }
+
     const sendEmoji = (emoji: any) => {
         setInputText(prev => prev + emoji.emoji);
     };
-    return(<>
-            <div className="conservation">
+
+    return (
+        <>
+            <div className="conversation">
                 <div className="heading">
                     <div className="heading-avatar">
                         <img src={avatarImg} alt="" />
@@ -39,14 +54,20 @@ export default function Conservation(){
                         Lại Thị Hoa
                     </div>
                 </div>
-                <div className="message-send">
-                    {messages.map((msg) =>(
+                <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>
+                    <div className="message-receive">
+                        <span> Hello, how r u?</span>
+                        <div className="time-send"> 20:00</div>
+                    </div>
+
+                    {messages.map((msg) => (
                         <div key={msg.id}
                              className ={msg.isMe ? "message my-message" : "message other-message"}>
                             <span>{msg.text}</span>
                             <div className="time-send"> {msg.time}</div>
                         </div>
                     ))}
+                    <div ref={messagesEndRef} />
                 </div>
                 {showPicker && (
                     <div className="emoji-picker">
