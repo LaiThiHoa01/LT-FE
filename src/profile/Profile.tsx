@@ -23,8 +23,12 @@ export default function Profile(){
                     </div>
                     <div className="pass">
                         <span>Mật khẩu: </span>
-                        <input type="password" value="********" placeholder="Nhập mật khẩu của bạn"/>
+                        <div className="pw">
+                            <input type="password" disabled value="********" placeholder="Nhập mật khẩu của bạn"/>
+                            <button id="btnPass">Đổi mật khẩu</button>
+                        </div>
                     </div>
+
                 </div>
                 <div className="btn">
                     <button id="btnLogout">Đăng xuất</button>

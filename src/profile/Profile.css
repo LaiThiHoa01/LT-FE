@@ -90,3 +90,19 @@ button:hover{
     background: rgba(63, 129, 228, 0.81);
     box-shadow: #7589a3 2px 2px 2px;
 }
+.pw{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    max-width: 500px;
+}
+#btnPass{
+    padding: 5px;
+    max-width: 150px;
+    right: 0;
+    background: rgba(123, 165, 227, 0.81);
+}
+#btnPass:hover{
+    background: rgba(63, 129, 228, 0.81);
+}
