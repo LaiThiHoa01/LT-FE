@@ -1,3 +1,58 @@
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    height: 50px;
+    background-color: #ffffff;
+    border-bottom: 1px solid rgb(217, 217, 217);
+    box-sizing: border-box;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.my-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.my-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #7589a3;
+    cursor: pointer;
+    font-size: 14px;
+}
+
 .list-contact {
     display: flex;
     flex-direction: column;
@@ -44,3 +99,4 @@
     color: #111111;
     margin-left: 8px;
 }
+
