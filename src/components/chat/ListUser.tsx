@@ -1,7 +1,12 @@
 import User from "./User.tsx";
 import avatarImg from '../../assets/woman_7185906.png'
 
-export default function ListUser() {
+interface ListUserProps {
+    onSelectUser?: (user: any) => void;
+    selectedUser?: any;
+}
+
+export default function ListUser({ onSelectUser, selectedUser }: ListUserProps) {
     const users = [
         {
             name: "Lai Thi Hoa",
@@ -19,7 +24,11 @@ export default function ListUser() {
     return (
         <>
             <div className="user-list">
-                {users.map((user) => (<User user={user}/>))}
+                {users.map((user) => (
+                    <div key={user.name} onClick={() => onSelectUser?.(user)}>
+                        <User user={user} isSelected={selectedUser?.name === user.name}/>
+                    </div>
+                ))}
             </div>
         </>
     )

@@ -1,7 +1,8 @@
 import './chat.css'
 import avatarImg from '../../assets/woman_7185906.png'
-import {useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
+
 interface Message {
     id: number | string;
     senderId: string | number;
@@ -9,10 +10,42 @@ interface Message {
     time: string;
     isMe: boolean;
 }
-export default function Conservation(){
+
+interface ConversationProps {
+    selectedUser?: {
+        name: string;
+        img: string;
+    };
+}
+
+export default function Conversation({ selectedUser }: ConversationProps) {
     const [showPicker, setShowPicker] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState("");
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const [messagesByUser, setMessagesByUser] = useState<Record<string, Message[]>>({
+        "Lai Thi Hoa": [
+            { id: 1, senderId: 2, text: "Hello, how r u?", time: "20:00", isMe: false }
+        ],
+        "Phung Thi Minh Thu": [
+            { id: 2, senderId: 2, text: "Hello", time: "20:00", isMe: false }
+        ],
+        "Than Van Danh": [
+            { id: 3, senderId: 2, text: "Hello", time: "20:00", isMe: false }
+        ]
+    });
+
+    const currentUserName = selectedUser?.name || "Lai Thi Hoa";
+    const messages = messagesByUser[currentUserName] || [];
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
     const sendMessage = () => {
         if(inputText.trim()){
             const newMessage: Message = {
@@ -22,31 +55,35 @@ export default function Conservation(){
                 time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
                 isMe: true
             };
-            setMessages([...messages, newMessage]);
+            setMessagesByUser(prev => ({...prev, [currentUserName]: [...(prev[currentUserName] || []), newMessage]}));
             setInputText("");
         }
     }
+
     const sendEmoji = (emoji: any) => {
         setInputText(prev => prev + emoji.emoji);
     };
-    return(<>
-            <div className="conservation">
+
+    return (
+        <>
+            <div className="conversation">
                 <div className="heading">
                     <div className="heading-avatar">
-                        <img src={avatarImg} alt="" />
+                        <img src={selectedUser?.img || avatarImg} alt="" />
                     </div>
                     <div className="heading-text">
-                        Lại Thị Hoa
+                        {selectedUser?.name || "Lại Thị Hoa"}
                     </div>
                 </div>
-                <div className="message-send">
-                    {messages.map((msg) =>(
+                <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>
+                    {messages.map((msg) => (
                         <div key={msg.id}
-                             className ={msg.isMe ? "message my-message" : "message other-message"}>
+                             className ={msg.isMe ? "message my-message" : "message-receive other-message"}>
                             <span>{msg.text}</span>
                             <div className="time-send"> {msg.time}</div>
                         </div>
                     ))}
+                    <div ref={messagesEndRef} />
                 </div>
                 {showPicker && (
                     <div className="emoji-picker">

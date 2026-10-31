@@ -4,7 +4,7 @@
     padding: 0;
     font-family: 'Montserrat', sans-serif;
 }
-.conservation {
+.conversation {
     height: 500px;
     width: 400px;
     display: flex;
@@ -80,6 +80,27 @@
     z-index: 1000;
 }
 .message-send{
+    flex: 1;
     overflow-y: auto;
+}
+.message-receive{
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+    margin-right: auto;
+    padding: 5px 5px;
+    border: 1px solid rgb(103 166 255);
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 15px;
+
+
+}
+.message-list{
+    overflow-y: auto;
+    flex: 1;
+    padding-bottom: 10px;
+
 }
 
