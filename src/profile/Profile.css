@@ -1,0 +1,92 @@
+.profile{
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+    place-content: center;
+    place-items: center;
+}
+.avt{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+img{
+    max-width: 80px;
+    border-radius: 50%;
+}
+#btnAvt{
+    padding: 5px;
+    display: flex;
+    background: #007bff;
+    color: white;
+    border: none;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    align-items: center;
+    max-width: 200px;
+}
+#btnAvt:hover{
+    background: #0015ff;
+    box-shadow: #7589a3 2px 2px 2px;
+}
+h1{
+    font-size: 30px;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+.detail{}
+input{
+    border-radius: 10px;
+    border: 1px solid #83a5af;
+    background-color: rgba(0,0,0,0);
+    height: 40px;
+    width: 500px;
+    padding-left: 10px;
+    font-size: 14px;
+    outline: #1f2028;
+}
+.name, .email, .sdt, .pass, .passAgain{
+    flex-direction: column;
+    display: flex;
+    gap:5px;
+}
+span{
+    text-align: left;
+    margin: 5px;
+    font-weight: 500;
+
+}
+.btn{
+    flex-direction: row;
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+}
+button{
+    height: 35px;
+    width: 500px;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: 200;
+}
+button:hover{
+    box-shadow: #7589a3 2px 2px 2px;
+}
+#btnLogout{
+    background: rgba(227, 123, 123, 0.81);
+}
+#btnLogout:hover{
+    background: rgba(244, 86, 86, 0.81);
+    box-shadow: #7589a3 2px 2px 2px;
+}
+#btnUpdate{
+    background: rgba(123, 165, 227, 0.81);
+}
+#btnUpdate:hover{
+    background: rgba(63, 129, 228, 0.81);
+    box-shadow: #7589a3 2px 2px 2px;
+}
