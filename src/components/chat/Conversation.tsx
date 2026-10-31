@@ -11,11 +11,32 @@ interface Message {
     isMe: boolean;
 }
 
-export default function Conversation() {
+interface ConversationProps {
+    selectedUser?: {
+        name: string;
+        img: string;
+    };
+}
+
+export default function Conversation({ selectedUser }: ConversationProps) {
     const [showPicker, setShowPicker] = useState(false);
-    const [messages, setMessages] = useState<Message[]>([]);
     const [inputText, setInputText] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
+
+    const [messagesByUser, setMessagesByUser] = useState<Record<string, Message[]>>({
+        "Lai Thi Hoa": [
+            { id: 1, senderId: 2, text: "Hello, how r u?", time: "20:00", isMe: false }
+        ],
+        "Phung Thi Minh Thu": [
+            { id: 2, senderId: 2, text: "Hello", time: "20:00", isMe: false }
+        ],
+        "Than Van Danh": [
+            { id: 3, senderId: 2, text: "Hello", time: "20:00", isMe: false }
+        ]
+    });
+
+    const currentUserName = selectedUser?.name || "Lai Thi Hoa";
+    const messages = messagesByUser[currentUserName] || [];
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,7 +55,7 @@ export default function Conversation() {
                 time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
                 isMe: true
             };
-            setMessages([...messages, newMessage]);
+            setMessagesByUser(prev => ({...prev, [currentUserName]: [...(prev[currentUserName] || []), newMessage]}));
             setInputText("");
         }
     }
@@ -48,21 +69,16 @@ export default function Conversation() {
             <div className="conversation">
                 <div className="heading">
                     <div className="heading-avatar">
-                        <img src={avatarImg} alt="" />
+                        <img src={selectedUser?.img || avatarImg} alt="" />
                     </div>
                     <div className="heading-text">
-                        Lại Thị Hoa
+                        {selectedUser?.name || "Lại Thị Hoa"}
                     </div>
                 </div>
                 <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>
-                    <div className="message-receive">
-                        <span> Hello, how r u?</span>
-                        <div className="time-send"> 20:00</div>
-                    </div>
-
                     {messages.map((msg) => (
                         <div key={msg.id}
-                             className ={msg.isMe ? "message my-message" : "message other-message"}>
+                             className ={msg.isMe ? "message my-message" : "message-receive other-message"}>
                             <span>{msg.text}</span>
                             <div className="time-send"> {msg.time}</div>
                         </div>
