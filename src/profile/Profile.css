@@ -48,7 +48,7 @@ input{
     font-size: 14px;
     outline: #1f2028;
 }
-.name, .email, .sdt, .pass, .passAgain{
+.divname, .email, .sdt, .pass, .passAgain{
     flex-direction: column;
     display: flex;
     gap:5px;

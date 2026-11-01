@@ -1,29 +1,34 @@
 import './App.css'
 import { BrowserRouter,Routes, Route} from 'react-router';
-import SignIn from "./auth/signIn/SignIn.tsx";
-import SignUp from "./auth/signUp/SignUp.tsx";
-import Forget from "./auth/forget/Forget.tsx";
 import Profile from "./profile/Profile.tsx";
-import Sidebar from "./components/Sidebar.tsx";
-import Conservation from "./components/Conservation.tsx";
-import OTP from "./auth/forget/Otp.tsx";
-import Reset from "./auth/forget/Reset.tsx";
+import Sidebar from "./components/chat/Sidebar.tsx";
 import ResetPass from "./profile/ResetPass.tsx";
+import { useState } from "react";
+import avatarImg from './assets/woman_7185906.png';
+import Conversation from "./components/chat/Conversation.tsx";
+import SignIn from "./components/auth/signIn/SignIn.tsx";
+import SignUp from "./components/auth/signUp/SignUp.tsx";
+import Forget from "./components/auth/forget/Forget.tsx";
+import OTP from "./components/auth/forget/Otp.tsx";
+import Reset from "./components/auth/forget/Reset.tsx";
 
 function ChatLayout() {
-
-    return (
-      <>
-          <div className="app-layout">
-              <aside className="sidebar-container">
-                  <Sidebar />
-              </aside>
-              <div className="main-content">
-                  <Conservation/>
-              </div>
-          </div>
-      </>
-    )
+  const [selectedUser, setSelectedUser] = useState({
+    name: "Lai Thi Hoa",
+    img: avatarImg
+  });
+  return (
+    <>
+        <div className="app-layout">
+            <aside className="sidebar-container">
+                <Sidebar onSelectUser={setSelectedUser} selectedUser={selectedUser} />
+            </aside>
+            <div className="main-content">
+                <Conversation selectedUser={selectedUser} />
+            </div>
+        </div>
+    </>
+  );
 }
 function App(){
     return (
@@ -36,7 +41,7 @@ function App(){
                 <Route path="forget" element={<Forget />} />
                 <Route path="logout" element={<Profile />} />
                 <Route path="profile" element={<Profile />} />
-                <Route path="convervation" element={<Conservation />} />
+                <Route path="convervation" element={<Conversation />} />
                 <Route path="sideBar" element={<Sidebar />} />
                 <Route path="profile" element={<Profile />} />
                 <Route path="otp" element={<OTP />} />

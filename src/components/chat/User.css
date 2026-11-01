@@ -5,6 +5,17 @@
     background-color: #ffffff;
     justify-content: left;
     border: 1px solid rgb(217 217 217);
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+.card-user:hover{
+    background-color: rgb(209 206 206);
+}
+.card-user.active{
+    background-color: rgb(229 241 255);
+}
+.card-user.active:hover{
+    background-color: rgb(215 233 255);
 }
 .avatar, .name{
     margin-left: 10px;

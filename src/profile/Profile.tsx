@@ -11,7 +11,7 @@ export default function Profile(){
                     <button id="btnAvt">Đổi ảnh đại diện</button>
                 </div>
                 <div className="detail">
-                    <div className="name">
+                    <div className="divname">
                         <span>Họ và tên: </span>
                         <input type="text" value="Phùng Thị Minh Thư" placeholder="Nhập họ và tên của bạn"/>
                     </div>
@@ -33,7 +33,7 @@ export default function Profile(){
 
                 </div>
                 <div className="btn">
-                    <button id="btnLogout" onClick={() => navigate('/otp')}>Đăng xuất</button>
+                    <button id="btnLogout" onClick={() => navigate('/index')}>Đăng xuất</button>
                     <button id="btnUpdate" >Cập nhật</button>
                 </div>
             </div>

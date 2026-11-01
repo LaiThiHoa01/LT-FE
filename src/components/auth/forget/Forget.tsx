@@ -10,7 +10,7 @@ export default function Forget(){
                 </div>
                 <div className="input">
                     <span>Email: </span>
-                    <div className="email">
+                    <div className="emailForget">
                         <input type="email" placeholder="Nhập email"/>
                     </div>
                 </div>
