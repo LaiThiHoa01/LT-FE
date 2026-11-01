@@ -1,6 +1,8 @@
 import "./Profile.css"
 import "./ResetPass.css"
+import {useNavigate} from "react-router";
 export default function ResetPass(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="reset">
@@ -20,7 +22,7 @@ export default function ResetPass(){
                         </div>
                     </div>
                 <div className="btn">
-                    <button id="btnUpdate">Cập nhật</button>
+                    <button id="btnUpdate" onClick={() => navigate('/profile')}>Cập nhật</button>
                 </div>
             </div>
         </>

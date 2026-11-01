@@ -1,5 +1,7 @@
 import "./Profile.css"
+import {useNavigate} from "react-router";
 export default function Profile(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="profile">
@@ -25,14 +27,14 @@ export default function Profile(){
                         <span>Mật khẩu: </span>
                         <div className="pw">
                             <input type="password" disabled value="********" placeholder="Nhập mật khẩu của bạn"/>
-                            <button id="btnPass">Đổi mật khẩu</button>
+                            <button id="btnPass" onClick={() => navigate('/resetPass')}>Đổi mật khẩu</button>
                         </div>
                     </div>
 
                 </div>
                 <div className="btn">
-                    <button id="btnLogout">Đăng xuất</button>
-                    <button id="btnUpdate">Cập nhật</button>
+                    <button id="btnLogout" onClick={() => navigate('/otp')}>Đăng xuất</button>
+                    <button id="btnUpdate" >Cập nhật</button>
                 </div>
             </div>
         </>

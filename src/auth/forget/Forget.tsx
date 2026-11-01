@@ -1,5 +1,7 @@
 import "./Forget.css"
+import {useNavigate} from "react-router";
 export default function Forget(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="forget">
@@ -13,7 +15,7 @@ export default function Forget(){
                     </div>
                 </div>
                 <div className="btn">
-                    <button id="send">Gửi</button>
+                    <button id="send" onClick={() => navigate('/otp')}>Gửi</button>
                 </div>
             </div>
         </>

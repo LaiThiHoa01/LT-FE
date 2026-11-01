@@ -1,5 +1,7 @@
 import "./Forget.css"
+import {useNavigate} from "react-router";
 export default function OTP(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="otp">
@@ -16,7 +18,7 @@ export default function OTP(){
                     </div>
                 </div>
                 <div className="btn">
-                    <button id="confirm">Xác nhận</button>
+                    <button id="confirm" onClick={() => navigate('/reset')}>Xác nhận</button>
                 </div>
             </div>
         </>

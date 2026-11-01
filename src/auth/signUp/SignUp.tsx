@@ -1,5 +1,7 @@
 import "./SignUp.css"
+import {useNavigate} from "react-router";
 export default function SignUp(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="signUp">
@@ -7,7 +9,7 @@ export default function SignUp(){
                     <h1>APP CHAT</h1>
                 </div>
                 <div className="input">
-                    <div className="name">
+                    <div className="divname">
                         <span>Họ và tên: </span>
                         <input type="text" placeholder="Nhập họ và tên của bạn"/>
                     </div>
@@ -29,8 +31,8 @@ export default function SignUp(){
                     </div>
                 </div>
                 <div className="btn">
-                    <button id="signUp">Đăng ký</button>
-                    <button id="had">Tôi đã có tài khoản</button>
+                    <button id="signUp" onClick={() => navigate('/login')}>Đăng ký</button>
+                    <button id="had" onClick={() => navigate('/index')}>Tôi đã có tài khoản</button>
                 </div>
             </div>
         </>
