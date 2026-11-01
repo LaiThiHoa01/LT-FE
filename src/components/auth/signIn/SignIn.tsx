@@ -1,5 +1,7 @@
 import "./SignIn.css"
+import { useNavigate } from "react-router";
 export default function SignIn(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="signIn">
@@ -11,11 +13,11 @@ export default function SignIn(){
                     <input type="text" placeholder="Mật khẩu"/>
                 </div>
                 <div className="btn">
-                    <button id="signIn">Đăng nhập</button>
-                    <button id="forget">Quên mật khẩu</button>
+                    <button id="signIn" onClick={() => navigate('/login')}>Đăng nhập</button>
+                    <button id="forget" onClick={() => navigate('/forget')}>Quên mật khẩu</button>
                 </div>
                 <div className="bottom">
-                    <button id="signUp">Tạo tài khoản mới</button>
+                    <button id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
                 </div>
             </div>
         </>

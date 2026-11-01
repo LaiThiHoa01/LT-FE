@@ -1,5 +1,7 @@
 import "./Forget.css"
+import {useNavigate} from "react-router";
 export default function Reset(){
+    let navigate = useNavigate();
     return (
         <>
             <div className="confirm">
@@ -17,7 +19,7 @@ export default function Reset(){
                     </div>
                 </div>
                 <div className="btn">
-                    <button id="reset">Xác nhận</button>
+                    <button id="reset" onClick={() => navigate('/index')}>Xác nhận</button>
                 </div>
             </div>
         </>
