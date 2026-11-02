@@ -11,24 +11,32 @@ import SignUp from "./components/auth/signUp/SignUp.tsx";
 import Forget from "./components/auth/forget/Forget.tsx";
 import OTP from "./components/auth/forget/Otp.tsx";
 import Reset from "./components/auth/forget/Reset.tsx";
+import UserInfo from "./components/chat/UserInfo.tsx";
 
 function ChatLayout() {
-  const [selectedUser, setSelectedUser] = useState({
-    name: "Lai Thi Hoa",
-    img: avatarImg
-  });
-  return (
-    <>
-        <div className="app-layout">
-            <aside className="sidebar-container">
-                <Sidebar onSelectUser={setSelectedUser} selectedUser={selectedUser} />
-            </aside>
-            <div className="main-content">
-                <Conversation selectedUser={selectedUser} />
+    const [selectedUser, setSelectedUser] = useState({
+        name: "Lai Thi Hoa",
+        img: avatarImg
+    });
+    const [showInfo, setShowInfo] = useState(false);
+    return (
+        <>
+            <div className="app-layout">
+                <aside className="sidebar-container">
+                    <Sidebar onSelectUser={setSelectedUser} selectedUser={selectedUser}/>
+                </aside>
+                <div className="main-content">
+                    <Conversation selectedUser={selectedUser} onToggleInfo={() => setShowInfo(!showInfo)} isInfoOpen={showInfo}/>
+                </div>
+                {showInfo && (
+                    <UserInfo
+                        selectedUser={selectedUser}
+                        onClose={() => setShowInfo(false)}
+                    />
+                )}
             </div>
-        </div>
-    </>
-  );
+        </>
+    );
 }
 function App(){
     return (

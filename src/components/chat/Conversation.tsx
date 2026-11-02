@@ -16,9 +16,11 @@ interface ConversationProps {
         name: string;
         img: string;
     };
+    onToggleInfo?: () => void;
+    isInfoOpen?: boolean;
 }
 
-export default function Conversation({ selectedUser }: ConversationProps) {
+export default function Conversation({ selectedUser, onToggleInfo,isInfoOpen }: ConversationProps) {
     const [showPicker, setShowPicker] = useState(false);
     const [inputText, setInputText] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -68,11 +70,19 @@ export default function Conversation({ selectedUser }: ConversationProps) {
         <>
             <div className="conversation">
                 <div className="heading">
-                    <div className="heading-avatar">
-                        <img src={selectedUser?.img || avatarImg} alt="" />
+                    <div className="heading-left">
+                        <div className="heading-avatar">
+                            <img src={selectedUser?.img || avatarImg} alt="" />
+                        </div>
+                        <div className="heading-text">
+                            {selectedUser?.name || "Lại Thị Hoa"}
+                        </div>
                     </div>
-                    <div className="heading-text">
-                        {selectedUser?.name || "Lại Thị Hoa"}
+                    <div className="heading-right">
+                        <button className={`info-toggle-btn ${isInfoOpen ? "active" : ""}`} onClick={onToggleInfo}
+                            title="Thông tin hội thoại">
+                            <i className="fa-solid fa-circle-info"></i>
+                        </button>
                     </div>
                 </div>
                 <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>
