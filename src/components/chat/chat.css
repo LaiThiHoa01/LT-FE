@@ -104,3 +104,32 @@
 
 }
 
+.heading {
+    justify-content: space-between;
+    padding-right: 15px;
+}
+
+.heading-left {
+    display: flex;
+    align-items: center;
+}
+
+.info-toggle-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    color: #7589a3;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-toggle-btn:hover,
+.info-toggle-btn.active {
+    background-color: #f0f2f5;
+    color: #0068ff;
+}
