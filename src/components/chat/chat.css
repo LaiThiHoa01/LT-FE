@@ -5,8 +5,8 @@
     font-family: 'Montserrat', sans-serif;
 }
 .conversation {
-    height: 500px;
-    width: 400px;
+    height: 600px;
+    width: 800px;
     display: flex;
     background-color: rgb(235 236 240);
     flex-direction: column;
@@ -76,7 +76,7 @@
 }
 .emoji-picker{
     position: absolute;
-    top: 260px;
+    top: 310px;
     z-index: 1000;
 }
 .message-send{
