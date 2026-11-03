@@ -1,7 +1,7 @@
-import User, {type UserItem} from "./User.tsx";
-import { useDispatch } from "react-redux";
-import avatarImg from '../../assets/woman_7185906.png'
-import {setActiveConversation} from "../../store/slices/chatSlice.tsx";
+import User from "./User.tsx";
+import type { UserItem } from "../../types/chat.ts";
+import {setActiveConversation} from "../../store/slices/chatSlice.ts";
+import {useAppSelector, useAppDispatch} from "../../store/store.ts";
 
 interface ListUserProps {
     onSelectUser?: (user: any) => void;
@@ -9,49 +9,24 @@ interface ListUserProps {
 }
 
 export default function ListUser({ onSelectUser, selectedUser }: ListUserProps) {
-    const dispatch = useDispatch();
-    const users : UserItem[]= [
-        {
-            id: 1,
-            name: "Lai Thi Hoa",
-            img: avatarImg,
-            lastMessage: "Hello, how r u?",
-            time: "20:00",
-            isOnline: true,
-            unreadCount: 2
-        },
-        {
-            id: 2,
-            name: "Phung Thi Minh Thu",
-            img: avatarImg,
-            lastMessage: "Hello",
-            time: "19:00",
-            isOnline: false,
-            unreadCount: 1
-        },
-        {
-            id: 3,
-            name: "Than Van Danh",
-            img: avatarImg,
-            lastMessage: "Hello",
-            time: "18:00",
-            isOnline: true,
-            unreadCount: 0
-        }
-    ];
+    const dispatch = useAppDispatch();
+    const users = useAppSelector((state) => state.chat.users);
+    const activeConversationId = useAppSelector((state) => state.chat.activeConversationId);
     const handleSelect = (user: UserItem) => {
         dispatch(setActiveConversation(user.id));
         onSelectUser?.(user);
-    }
+    };
+
     return (
-        <>
-            <div className="user-list">
-                {users.map((user) => (
-                    <div key={user.name} onClick={() => handleSelect?.(user)}>
-                        <User user={user} isSelected={selectedUser?.name === user.name}/>
+        <div className="user-list">
+            {users.map((user) => {
+                const isSelected = selectedUser ? selectedUser.name === user.name : user.id === activeConversationId;
+                return (
+                    <div key={user.id} onClick={() => handleSelect(user)}>
+                        <User user={user} isSelected={isSelected}/>
                     </div>
-                ))}
-            </div>
-        </>
-    )
+                );
+            })}
+        </div>
+    );
 }

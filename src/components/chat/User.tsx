@@ -1,15 +1,7 @@
 import "./User.css"
-export interface UserItem {
-    id: number | string;
-    name: string;
-    img: string;
-    lastMessage: string;
-    time: string;
-    isOnline: boolean;
-    unreadCount: number;
-}
+import type { UserItem } from "../../types/chat";
 
-export default function User({user, isSelected} : { user: UserItem; isSelected?: boolean }) {
+export default function User({user, isSelected}: { user: UserItem; isSelected?: boolean }) {
     return (
         <>
             <div className={`card-user ${isSelected ? "active" : ""}`}>
