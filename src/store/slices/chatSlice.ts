@@ -3,11 +3,13 @@ import avatar from '../../assets/woman_7185906.png';
 import type { ChatState, Message } from '../../types/chat';
 const initialState: ChatState = {
     users: [
-        { id: 1, name: 'Lai Thi Hoa', img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00' },
+        { id: 1, name: 'Lai Thi Hoa', img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00 PM' },
+        { id: 2, name: 'Than Văn Danh', img: avatar, isOnline: true, unreadCount: 1, lastMessage: 'Hello, how r u?', time: '9:00 PM' },
     ],
     activeConversationId: 1,
     messagesByUser: {
-        1: [{ id: 'm1', senderId: 1, text: 'Hello, how r u?', time: '20:00', isMe: false }],
+        1: [{ id: 'm1', senderId: 1, text: 'Hello, how r u?', time: '20:00 PM', isMe: false }],
+        2: [{ id: 'm2', senderId: 1, text: 'Hello, how r u?', time: '(9:00 PM', isMe: false }],
     },
     isInfoOpen: false,
 };
@@ -23,15 +25,30 @@ const chatSlice = createSlice({
         addMessage: (state, action: PayloadAction<{ conversationId: number; message: Message }>) => {
             const { conversationId, message } = action.payload;
             if (!message.text.trim()) return;
-            (state.messagesByUser[conversationId] ??= []).push({
+            if (!state.messagesByUser[conversationId]) {
+                state.messagesByUser[conversationId] = [];
+            }
+            state.messagesByUser[conversationId].push({
                 ...message,
                 text: message.text.trim()
             });
+            const user = state.users.find(u => u.id === conversationId);
+            if (user) {
+                user.lastMessage = message.text.trim();
+                user.time = message.time;
+            }
         },
-        toggleInfo: (state) => { state.isInfoOpen = !state.isInfoOpen; },
-        closeInfo: (state) => { state.isInfoOpen = false; },
+        toggleInfo: (state) => { 
+            state.isInfoOpen = !state.isInfoOpen; 
+        },
+        closeInfo: (state) => { 
+            state.isInfoOpen = false; 
+        },
+        openInfo: (state) => {
+            state.isInfoOpen = true;
+        },
     },
 });
 
-export const { setActiveConversation, addMessage, toggleInfo, closeInfo } = chatSlice.actions;
+export const { setActiveConversation, addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
 export default chatSlice.reducer;

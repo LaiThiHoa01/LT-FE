@@ -43,10 +43,11 @@
     margin-top: 10px;
     font-size: 15px;
 }
-.message .time-send{
+.time-send, .message .time-send, .message-receive .time-send {
     font-size: 10px;
     color: rgb(81 96 122);
     text-align: left;
+    margin-top: 2px;
 }
 .reply{
     margin-top: auto;
