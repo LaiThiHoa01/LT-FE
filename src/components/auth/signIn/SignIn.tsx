@@ -13,7 +13,7 @@ export default function SignIn(){
                     <input type="text" placeholder="Mật khẩu"/>
                 </div>
                 <div className="btn">
-                    <button id="signIn" onClick={() => navigate('/login')}>Đăng nhập</button>
+                    <button id="signIn" onClick={() => navigate('/chat')}>Đăng nhập</button>
                     <button id="forget" onClick={() => navigate('/forget')}>Quên mật khẩu</button>
                 </div>
                 <div className="bottom">

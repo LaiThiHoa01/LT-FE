@@ -32,7 +32,7 @@ export default function SignUp(){
                 </div>
                 <div className="btn">
                     <button id="signUp" onClick={() => navigate('/login')}>Đăng ký</button>
-                    <button id="had" onClick={() => navigate('/index')}>Tôi đã có tài khoản</button>
+                    <button id="had" onClick={() => navigate('/login')}>Tôi đã có tài khoản</button>
                 </div>
             </div>
         </>
