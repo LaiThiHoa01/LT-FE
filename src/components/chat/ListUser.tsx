@@ -1,5 +1,7 @@
 import User from "./User.tsx";
-import avatarImg from '../../assets/woman_7185906.png'
+import type { UserItem } from "../../types/chat.ts";
+import {setActiveConversation} from "../../store/slices/chatSlice.ts";
+import {useAppSelector, useAppDispatch} from "../../store/store.ts";
 
 interface ListUserProps {
     onSelectUser?: (user: any) => void;
@@ -7,29 +9,24 @@ interface ListUserProps {
 }
 
 export default function ListUser({ onSelectUser, selectedUser }: ListUserProps) {
-    const users = [
-        {
-            name: "Lai Thi Hoa",
-            img: avatarImg
-        },
-        {
-            name: "Phung Thi Minh Thu",
-            img: avatarImg
-        },
-        {
-            name: "Than Van Danh",
-            img: avatarImg
-        }
-    ]
+    const dispatch = useAppDispatch();
+    const users = useAppSelector((state) => state.chat.users);
+    const activeConversationId = useAppSelector((state) => state.chat.activeConversationId);
+    const handleSelect = (user: UserItem) => {
+        dispatch(setActiveConversation(user.id));
+        onSelectUser?.(user);
+    };
+
     return (
-        <>
-            <div className="user-list">
-                {users.map((user) => (
-                    <div key={user.name} onClick={() => onSelectUser?.(user)}>
-                        <User user={user} isSelected={selectedUser?.name === user.name}/>
+        <div className="user-list">
+            {users.map((user) => {
+                const isSelected = selectedUser ? selectedUser.name === user.name : user.id === activeConversationId;
+                return (
+                    <div key={user.id} onClick={() => handleSelect(user)}>
+                        <User user={user} isSelected={isSelected}/>
                     </div>
-                ))}
-            </div>
-        </>
-    )
+                );
+            })}
+        </div>
+    );
 }

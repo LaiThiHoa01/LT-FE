@@ -2,41 +2,33 @@ import './chat.css'
 import avatarImg from '../../assets/woman_7185906.png'
 import { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
-
-interface Message {
-    id: number | string;
-    senderId: string | number;
-    text: string;
-    time: string;
-    isMe: boolean;
-}
+import { useAppDispatch, useAppSelector } from '../../store/store';
+import { addMessage } from '../../store/slices/chatSlice';
+import type { Message } from '../../types/chat';
 
 interface ConversationProps {
     selectedUser?: {
         name: string;
         img: string;
     };
+    onToggleInfo?: () => void;
+    isInfoOpen?: boolean;
 }
 
-export default function Conversation({ selectedUser }: ConversationProps) {
+export default function Conversation({ selectedUser, onToggleInfo,isInfoOpen }: ConversationProps) {
+    const dispatch = useAppDispatch();
     const [showPicker, setShowPicker] = useState(false);
     const [inputText, setInputText] = useState("");
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
-    const [messagesByUser, setMessagesByUser] = useState<Record<string, Message[]>>({
-        "Lai Thi Hoa": [
-            { id: 1, senderId: 2, text: "Hello, how r u?", time: "20:00", isMe: false }
-        ],
-        "Phung Thi Minh Thu": [
-            { id: 2, senderId: 2, text: "Hello", time: "20:00", isMe: false }
-        ],
-        "Than Van Danh": [
-            { id: 3, senderId: 2, text: "Hello", time: "20:00", isMe: false }
-        ]
-    });
+    const activeConversationId = useAppSelector((state) => state.chat.activeConversationId);
+    const users = useAppSelector((state) => state.chat.users);
+    const messagesByUser = useAppSelector((state) => state.chat.messagesByUser);
 
-    const currentUserName = selectedUser?.name || "Lai Thi Hoa";
-    const messages = messagesByUser[currentUserName] || [];
+    const activeUser = users.find((u) => u.id === activeConversationId) || users[0];
+    const currentUserName = activeUser?.name || selectedUser?.name;
+    const currentUserImg = activeUser?.img || selectedUser?.img || avatarImg;
+    const messages = (activeUser ? messagesByUser[activeUser.id] : []) || [];
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -47,7 +39,7 @@ export default function Conversation({ selectedUser }: ConversationProps) {
     }, [messages]);
 
     const sendMessage = () => {
-        if(inputText.trim()){
+        if(inputText.trim() && activeUser){
             const newMessage: Message = {
                 id:crypto.randomUUID(),
                 senderId:1,
@@ -55,7 +47,10 @@ export default function Conversation({ selectedUser }: ConversationProps) {
                 time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
                 isMe: true
             };
-            setMessagesByUser(prev => ({...prev, [currentUserName]: [...(prev[currentUserName] || []), newMessage]}));
+            dispatch(addMessage({
+                conversationId: activeUser.id,
+                message: newMessage
+            }));
             setInputText("");
         }
     }
@@ -68,11 +63,19 @@ export default function Conversation({ selectedUser }: ConversationProps) {
         <>
             <div className="conversation">
                 <div className="heading">
-                    <div className="heading-avatar">
-                        <img src={selectedUser?.img || avatarImg} alt="" />
+                    <div className="heading-left">
+                        <div className="heading-avatar">
+                            <img src={currentUserImg} alt="" />
+                        </div>
+                        <div className="heading-text">
+                            {currentUserName}
+                        </div>
                     </div>
-                    <div className="heading-text">
-                        {selectedUser?.name || "Lại Thị Hoa"}
+                    <div className="heading-right">
+                        <button className={`info-toggle-btn ${isInfoOpen ? "active" : ""}`} onClick={onToggleInfo}
+                            title="Thông tin hội thoại">
+                            <i className="fa-solid fa-circle-info"></i>
+                        </button>
                     </div>
                 </div>
                 <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>

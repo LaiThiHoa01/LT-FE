@@ -28,7 +28,6 @@
     font-weight: 600;
     color: #111111;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100px;
 }
