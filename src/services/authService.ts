@@ -6,7 +6,7 @@ export function registerAPI(username:string, password:string) {
         console.error("WebSocket chua san sang");
         return;
     }
-    const sendRegister = async () => {
+    const sendRegister = () => {
         socket.send(JSON.stringify({
             action: "onchat",
             data: {
@@ -20,5 +20,27 @@ export function registerAPI(username:string, password:string) {
     }
     if (socket.readyState == WebSocket.OPEN) {
         sendRegister();
+    }
+}
+export function loginAPI(username: string, password: string){
+    const socket = getSocket();
+    if(!socket){
+        console.error("WebSocket chua san sang");
+        return;
+    }
+    const sendLogin=  () => {
+        socket.send(JSON.stringify({
+            action: "onchat",
+            data:{
+                event: "LOGIN",
+                data: {
+                    "user": username,
+                    "pass": password
+                }
+            }
+        }))
+    }
+    if(socket.readyState==WebSocket.OPEN){
+        sendLogin();
     }
 }
