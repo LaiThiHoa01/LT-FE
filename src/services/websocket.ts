@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 
+let socket: WebSocket | null = null;
+
 export function useWebSocket() {
     useEffect(() => {
         var active = true;
-        const socket = new WebSocket(
+        socket = new WebSocket(
             "wss://chat.longapp.io.vn/chat/chat"
         );
         socket.onopen = () => {
@@ -24,7 +26,12 @@ export function useWebSocket() {
         };
         return () => {
             active = false;
-            socket.close();
+            if(socket!=null) {
+                socket.close();
+            }
         };
     }, []);
+}
+export function getSocket() {
+    return socket;
 }
