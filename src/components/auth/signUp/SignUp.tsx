@@ -1,7 +1,17 @@
 import "./SignUp.css"
 import {useNavigate} from "react-router";
+import {useState} from "react";
+import {registerAPI} from "../../../services/authService.ts";
 export default function SignUp(){
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     let navigate = useNavigate();
+
+    function handleRegister() {
+        registerAPI(username, password);
+        navigate("/login");
+    }
+
     return (
         <>
             <div className="signUp">
@@ -11,7 +21,7 @@ export default function SignUp(){
                 <div className="input">
                     <div className="divname">
                         <span>Họ và tên: </span>
-                        <input type="text" placeholder="Nhập họ và tên của bạn"/>
+                        <input type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập họ và tên của bạn"/>
                     </div>
                     <div className="email">
                         <span>Email: </span>
@@ -23,7 +33,7 @@ export default function SignUp(){
                     </div>
                     <div className="pass">
                         <span>Mật khẩu: </span>
-                        <input type="password" placeholder="Nhập mật khẩu của bạn"/>
+                        <input type="password" value={password} onChange={(e)=> setPassword(e.target.value)} placeholder="Nhập mật khẩu của bạn"/>
                     </div>
                     <div className="passAgain">
                         <span>Xác nhận lại mật khẩu: </span>
@@ -31,7 +41,7 @@ export default function SignUp(){
                     </div>
                 </div>
                 <div className="btn">
-                    <button id="signUp" onClick={() => navigate('/login')}>Đăng ký</button>
+                    <button id="signUp" onClick={handleRegister}>Đăng ký</button>
                     <button id="had" onClick={() => navigate('/login')}>Tôi đã có tài khoản</button>
                 </div>
             </div>
