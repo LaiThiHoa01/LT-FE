@@ -19,6 +19,7 @@ export interface UserItem extends ChatUser {
 export interface ChatState {
     users: UserItem[];
     activeConversationId: number | null;
+    activeTarget: UserItem | null;
     messagesByUser: Record<number, Message[]>;
     isInfoOpen: boolean;
 }

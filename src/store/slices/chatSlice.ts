@@ -1,12 +1,14 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import avatar from '../../assets/woman_7185906.png';
-import type { ChatState, Message } from '../../types/chat';
+import type {ChatState, Message, UserItem} from '../../types/chat';
+
+const initialUser : UserItem[] = [
+    { id: 1, name: 'Lai Thi Hoa', img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00 PM' },
+    { id: 2, name: 'Than Văn Danh', img: avatar, isOnline: true, unreadCount: 1, lastMessage: 'Hello, how r u?', time: '9:00 PM' }]
 const initialState: ChatState = {
-    users: [
-        { id: 1, name: 'Lai Thi Hoa', img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00 PM' },
-        { id: 2, name: 'Than Văn Danh', img: avatar, isOnline: true, unreadCount: 1, lastMessage: 'Hello, how r u?', time: '9:00 PM' },
-    ],
+    users: initialUser,
     activeConversationId: 1,
+    activeTarget: initialUser[0],
     messagesByUser: {
         1: [{ id: 'm1', senderId: 1, text: 'Hello, how r u?', time: '20:00 PM', isMe: false }],
         2: [{ id: 'm2', senderId: 1, text: 'Hello, how r u?', time: '(9:00 PM', isMe: false }],
@@ -20,7 +22,18 @@ const chatSlice = createSlice({
         setActiveConversation: (state, action: PayloadAction<number>) => {
             state.activeConversationId = action.payload;
             const user = state.users.find(u => u.id === action.payload);
-            if (user) user.unreadCount = 0;
+            if (user){
+                user.unreadCount = 0;
+                state.activeTarget = user;
+            }
+        },
+        setActiveTarget:(state, action: PayloadAction<UserItem>) => {
+            state.activeTarget = action.payload;
+            state.activeConversationId = action.payload.id;
+            const user = state.users.find(u => u.id === action.payload.id);
+            if(user){
+                user.unreadCount = 0;
+            }
         },
         addMessage: (state, action: PayloadAction<{ conversationId: number; message: Message }>) => {
             const { conversationId, message } = action.payload;
@@ -50,5 +63,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setActiveConversation, addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
+export const { setActiveConversation,setActiveTarget,  addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
 export default chatSlice.reducer;

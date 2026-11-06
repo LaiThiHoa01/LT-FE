@@ -3,19 +3,10 @@ import avatarImg from '../../assets/woman_7185906.png'
 import { useEffect, useRef, useState } from "react";
 import EmojiPicker from "emoji-picker-react";
 import { useAppDispatch, useAppSelector } from '../../store/store';
-import { addMessage } from '../../store/slices/chatSlice';
+import {addMessage, toggleInfo} from '../../store/slices/chatSlice';
 import type { Message } from '../../types/chat';
 
-interface ConversationProps {
-    selectedUser?: {
-        name: string;
-        img: string;
-    };
-    onToggleInfo?: () => void;
-    isInfoOpen?: boolean;
-}
-
-export default function Conversation({ selectedUser, onToggleInfo,isInfoOpen }: ConversationProps) {
+export default function Conversation() {
     const dispatch = useAppDispatch();
     const [showPicker, setShowPicker] = useState(false);
     const [inputText, setInputText] = useState("");
@@ -24,10 +15,10 @@ export default function Conversation({ selectedUser, onToggleInfo,isInfoOpen }: 
     const activeConversationId = useAppSelector((state) => state.chat.activeConversationId);
     const users = useAppSelector((state) => state.chat.users);
     const messagesByUser = useAppSelector((state) => state.chat.messagesByUser);
-
+    const isInfoOpen = useAppSelector((state)=> state.chat.isInfoOpen);
     const activeUser = users.find((u) => u.id === activeConversationId) || users[0];
-    const currentUserName = activeUser?.name || selectedUser?.name;
-    const currentUserImg = activeUser?.img || selectedUser?.img || avatarImg;
+    const currentUserName = activeUser?.name || "User";
+    const currentUserImg = activeUser?.img ||  avatarImg;
     const messages = (activeUser ? messagesByUser[activeUser.id] : []) || [];
 
     const scrollToBottom = () => {
@@ -72,7 +63,7 @@ export default function Conversation({ selectedUser, onToggleInfo,isInfoOpen }: 
                         </div>
                     </div>
                     <div className="heading-right">
-                        <button className={`info-toggle-btn ${isInfoOpen ? "active" : ""}`} onClick={onToggleInfo}
+                        <button className={`info-toggle-btn ${isInfoOpen ? "active" : ""}`} onClick={()=> dispatch(toggleInfo())}
                             title="Thông tin hội thoại">
                             <i className="fa-solid fa-circle-info"></i>
                         </button>

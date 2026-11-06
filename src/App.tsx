@@ -3,8 +3,8 @@ import { BrowserRouter,Routes, Route} from 'react-router';
 import Profile from "./profile/Profile.tsx";
 import Sidebar from "./components/chat/Sidebar.tsx";
 import ResetPass from "./profile/ResetPass.tsx";
-import { useState } from "react";
-import avatarImg from './assets/woman_7185906.png';
+// import { useState } from "react";
+// import avatarImg from './assets/woman_7185906.png';
 import Conversation from "./components/chat/Conversation.tsx";
 import SignIn from "./components/auth/signIn/SignIn.tsx";
 import SignUp from "./components/auth/signUp/SignUp.tsx";
@@ -13,28 +13,21 @@ import OTP from "./components/auth/forget/Otp.tsx";
 import Reset from "./components/auth/forget/Reset.tsx";
 import UserInfo from "./components/chat/UserInfo.tsx";
 import {useWebSocket} from "./services/websocket.ts";
+import {useAppSelector} from "./store/store.ts";
 
 function ChatLayout() {
-    const [selectedUser, setSelectedUser] = useState({
-        name: "Lai Thi Hoa",
-        img: avatarImg
-    });
-    const [showInfo, setShowInfo] = useState(false);
+    const isInfoOpen = useAppSelector(state => state.chat.isInfoOpen);
+
     return (
         <>
             <div className="app-layout">
                 <aside className="sidebar-container">
-                    <Sidebar onSelectUser={setSelectedUser} selectedUser={selectedUser}/>
+                    <Sidebar />
                 </aside>
                 <div className="main-content">
-                    <Conversation selectedUser={selectedUser} onToggleInfo={() => setShowInfo(!showInfo)} isInfoOpen={showInfo}/>
+                    <Conversation />
                 </div>
-                {showInfo && (
-                    <UserInfo
-                        selectedUser={selectedUser}
-                        onClose={() => setShowInfo(false)}
-                    />
-                )}
+                {isInfoOpen && (<UserInfo />)}
             </div>
         </>
     );

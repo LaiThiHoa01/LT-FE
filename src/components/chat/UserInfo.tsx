@@ -1,23 +1,20 @@
 import "./UserInfo.css";
 import defaultAvatar from "../../assets/woman_7185906.png";
+import {useAppDispatch, useAppSelector} from "../../store/store.ts";
+import {closeInfo} from "../../store/slices/chatSlice.ts";
 
-interface UserInfoProps {
-    selectedUser?: {
-        name: string;
-        img: string;
-    };
-    onClose: () => void;
-}
+export default function UserInfo() {
+    const dispatch = useAppDispatch();
+    const activeTarget = useAppSelector((state) => state.chat.activeTarget);
 
-export default function UserInfo({selectedUser, onClose}: UserInfoProps) {
-    const userName = selectedUser?.name || "Lại Thị Hoa";
-    const userImg = selectedUser?.img || defaultAvatar;
+    const userName = activeTarget?.name || "User";
+    const userImg = activeTarget?.img || defaultAvatar;
 
     return (
         <div className="chat-info-panel">
             <div className="panel-header">
                 <h3>Thông tin hội thoại</h3>
-                <button className="panel-close-btn" onClick={onClose} title="Đóng">
+                <button className="panel-close-btn" onClick={()=> dispatch(closeInfo())} title="Đóng">
                     <i className="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -25,7 +22,7 @@ export default function UserInfo({selectedUser, onClose}: UserInfoProps) {
                 <div className="panel-profile">
                     <img src={userImg} alt={userName} className="big-avatar"/>
                     <h4 className="profile-name">{userName}</h4>
-                    <span className="profile-status">Đang hoạt động</span>
+                    <span className="profile-status">{activeTarget?.isOnline?"Đang hoạt động":"Không hoạt động"}</span>
                 </div>
                 <div className="panel-quick-actions">
                     <button className="quick-btn">
