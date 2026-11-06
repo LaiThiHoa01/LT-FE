@@ -12,6 +12,7 @@ import Forget from "./components/auth/forget/Forget.tsx";
 import OTP from "./components/auth/forget/Otp.tsx";
 import Reset from "./components/auth/forget/Reset.tsx";
 import UserInfo from "./components/chat/UserInfo.tsx";
+import {useWebSocket} from "./services/websocket.ts";
 
 function ChatLayout() {
     const [selectedUser, setSelectedUser] = useState({
@@ -39,6 +40,7 @@ function ChatLayout() {
     );
 }
 function App(){
+    useWebSocket();
     return (
         <BrowserRouter>
             <Routes>
