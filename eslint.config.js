@@ -10,6 +10,7 @@ export default [
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
         rules: {
+            'no-var': 'off',
             'prefer-const': 'off',
             'react/react-in-jsx-scope': 'off',
             '@typescript-eslint/no-explicit-any': 'off',
