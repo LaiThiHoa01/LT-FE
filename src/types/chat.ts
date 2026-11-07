@@ -19,6 +19,14 @@ export interface UserItem extends ChatUser {
 export interface ChatState {
     users: UserItem[];
     activeConversationId: number | null;
+    activeTarget: UserItem | null;
     messagesByUser: Record<number, Message[]>;
     isInfoOpen: boolean;
+    userList: RoomUserItem[]
+}
+export interface RoomUserItem{
+    name: string;
+    type: number;
+    actionTime: string;
+    isOnline: boolean;
 }

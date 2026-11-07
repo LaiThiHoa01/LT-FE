@@ -2,12 +2,7 @@ import ListUser from "./ListUser.tsx";
 import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
 
-interface SidebarProps {
-    onSelectUser?: (user: any) => void;
-    selectedUser?: any;
-}
-
-export default function Sidebar({ onSelectUser, selectedUser }: SidebarProps) {
+export default function Sidebar() {
     return (
         <>
             <div className="list-contact">
@@ -32,7 +27,7 @@ export default function Sidebar({ onSelectUser, selectedUser }: SidebarProps) {
                         </button>
                     </form>
                 </div>
-                <ListUser onSelectUser={onSelectUser} selectedUser={selectedUser}/>
+                <ListUser />
             </div>
         </>
     )
