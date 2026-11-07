@@ -1,8 +1,9 @@
 export interface ChatUser {
-    id: number;
+    id: string;
     name: string;
+    type: ChatType;
     img: string;
-    isOnline: boolean;
+    isOnline?: boolean;
     unreadCount: number;
 }
 export interface Message {
@@ -18,15 +19,15 @@ export interface UserItem extends ChatUser {
 }
 export interface ChatState {
     users: UserItem[];
-    activeConversationId: number | null;
+    activeConversationId: string | null;
     activeTarget: UserItem | null;
-    messagesByUser: Record<number, Message[]>;
+    messagesByUser: Record<string, Message[]>;
     isInfoOpen: boolean;
-    userList: RoomUserItem[]
 }
 export interface RoomUserItem{
     name: string;
-    type: number;
+    type: ChatType;
     actionTime: string;
     isOnline: boolean;
 }
+export type ChatType = 0 | 1;
