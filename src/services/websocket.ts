@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import {sendGetUserList} from "./chatService.ts";
 
 let socket: WebSocket | null = null;
 
@@ -15,6 +16,10 @@ export function useWebSocket() {
         socket.onmessage = (event) => {
             if (active)
                 console.log("dữ liệu", event.data);
+            const response = JSON.parse(event.data);
+            if(response.event === "LOGIN" && response.status === "success") {
+                sendGetUserList();
+            }
         };
         socket.onerror = (error) => {
             if (active)
@@ -31,6 +36,10 @@ export function useWebSocket() {
             }
         };
     }, []);
+}
+export function sendJsonMessage(payload: object) {
+    if(socket && socket.readyState == WebSocket.OPEN)
+        socket.send(JSON.stringify(payload));
 }
 export function getSocket() {
     return socket;
