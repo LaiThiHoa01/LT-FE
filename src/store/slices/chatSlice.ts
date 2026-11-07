@@ -1,6 +1,6 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import avatar from '../../assets/woman_7185906.png';
-import type {ChatState, Message, UserItem} from '../../types/chat';
+import type {ChatState, Message, UserItem, RoomUserItem} from '../../types/chat';
 
 const initialUser : UserItem[] = [
     { id: 1, name: 'Lai Thi Hoa', img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00 PM' },
@@ -14,6 +14,7 @@ const initialState: ChatState = {
         2: [{ id: 'm2', senderId: 1, text: 'Hello, how r u?', time: '(9:00 PM', isMe: false }],
     },
     isInfoOpen: false,
+    userList: [],
 };
 const chatSlice = createSlice({
     name: 'chat',
@@ -33,6 +34,15 @@ const chatSlice = createSlice({
             const user = state.users.find(u => u.id === action.payload.id);
             if(user){
                 user.unreadCount = 0;
+            }
+        },
+        setUserlist: (state, action: PayloadAction<RoomUserItem[]>) => {
+            state.userList = action.payload;
+        },
+        setOnlineStatus: (state, action: PayloadAction<{ name: string; isOnline: boolean }>) => {
+            const item = state.userList.find(u => u.name === action.payload.name);
+            if(item) {
+                item.isOnline = action.payload.isOnline;
             }
         },
         addMessage: (state, action: PayloadAction<{ conversationId: number; message: Message }>) => {
@@ -63,5 +73,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const { setActiveConversation,setActiveTarget,  addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
+export const { setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus, addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
 export default chatSlice.reducer;

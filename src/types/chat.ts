@@ -22,4 +22,11 @@ export interface ChatState {
     activeTarget: UserItem | null;
     messagesByUser: Record<number, Message[]>;
     isInfoOpen: boolean;
+    userList: RoomUserItem[]
+}
+export interface RoomUserItem{
+    name: string;
+    type: number;
+    actionTime: string;
+    isOnline: boolean;
 }
