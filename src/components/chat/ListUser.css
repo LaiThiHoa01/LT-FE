@@ -1,0 +1,23 @@
+.user-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+}
+
+.user-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.user-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.user-list::-webkit-scrollbar-thumb {
+    background-color: #d1d5db;
+    border-radius: 4px;
+}
+
+.user-list::-webkit-scrollbar-thumb:hover {
+    background-color: #9ca3af;
+}
