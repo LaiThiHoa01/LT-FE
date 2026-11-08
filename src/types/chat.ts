@@ -28,6 +28,6 @@ export interface RoomUserItem{
     name: string;
     type: ChatType;
     actionTime: string;
-    isOnline: boolean;
+    isOnline?: boolean;
 }
 export type ChatType = 0 | 1;

@@ -1,8 +1,28 @@
 import ListUser from "./ListUser.tsx";
 import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
+import {createRoomAPI} from "../../services/roomService.ts";
+import {type SubmitEvent, useRef, useState} from "react";
 
 export default function Sidebar() {
+    const dialogRef = useRef<HTMLDialogElement>(null);
+    const [roomName, setRoomName] = useState('');
+    const [roomError, setRoomError] = useState('');
+
+    function openCreateRoom() {
+        setRoomName('');
+        setRoomError('');
+        dialogRef.current?.showModal();
+    }
+function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    try {
+        createRoomAPI(roomName);
+        dialogRef.current?.close();
+    } catch (error) {
+        window.alert(error instanceof Error ? error.message : 'Tạo phòng thất bại.');
+    }
+}
     return (
         <>
             <div className="list-contact">
@@ -12,11 +32,11 @@ export default function Sidebar() {
                         <span className="my-name">Thân Văn Danh</span>
                     </div>
                     <div className="header-actions">
-                        <button className="action-btn" title="Tạo cuộc trò chuyện / nhóm mới">
-                            <i className="fa-solid fa-user-plus"></i>
+                        <button type="button" className="action-btn add_group" title="Tạo nhóm mới" onClick={openCreateRoom}>
+                            <i className="fa-solid fa-users"></i>
                         </button>
-                        <button className="action-btn" title="Cài đặt">
-                            <i className="fa-solid fa-gear"></i>
+                        <button className="action-btn" title="Thêm người dùng">
+                            <i className="fa-solid fa-user-plus"></i>
                         </button>
                     </div>
                 </div>
@@ -29,6 +49,20 @@ export default function Sidebar() {
                 </div>
                 <ListUser />
             </div>
+            <dialog ref={dialogRef} className={"create-room-dialog"} aria-labelledby="create-room-title">
+                <form onSubmit={handleCreateRoom}>
+                    <h2 id="create-room-title">Tạo nhóm mới</h2>
+                    <label htmlFor="create-room-name">Tên phòng</label>
+                    <input id="create-room-name" placeholder="Nhaapj tên phòng" value={roomName} onChange={e => {setRoomName(e.target.value); setRoomError('')}} required/>
+                    {roomError && (
+                        <p className="create-room-error" role="alert">{roomError}</p>
+                    )}
+                    <div className="create-room-actions">
+                        <button type="button" className="cancel-create-room" onClick={() => dialogRef.current?.close()}>Hủy</button>
+                        <button type="submit" className="create-room-submit">Tạo nhóm</button>
+                    </div>
+                </form>
+            </dialog>
         </>
     )
 }
