@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import {sendGetUserList} from "./chatService.ts";
+import {handleChatUser, sendGetUserList} from "./chatService.ts";
 
 let socket: WebSocket | null = null;
 
@@ -20,6 +20,7 @@ export function useWebSocket() {
             if(response.event === "LOGIN" && response.status === "success") {
                 sendGetUserList();
             }
+            handleChatUser(response);
         };
         socket.onerror = (error) => {
             if (active)
