@@ -1,0 +1,45 @@
+.auth{
+    font-family: Montserrat, sans-serif;
+    font-size: 14px;
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+    place-content: center;
+    place-items: center;
+    flex-grow: 1;
+}
+.nameTitle{
+    font-size: 30px;
+    letter-spacing: 2px;
+    font-weight: 800;
+}
+.divInput{
+    flex-direction: column;
+    display: flex;
+    gap: 20px;
+
+}
+.inputAuth{
+    border-radius: 10px;
+    border: 1px solid #83a5af;
+    background-color: rgba(0,0,0,0);
+    height: 40px;
+    width: 500px;
+    padding-left: 10px;
+    font-size: 14px;
+    outline: #1f2028;
+}
+.divBtn{
+    flex-direction: column;
+    display: flex;
+    gap: 10px;
+}
+.btnAuth{
+    height: 35px;
+    width: 500px;
+    border-radius: 15px;
+    border: none;
+    font-size: 14px;
+    font-weight: 200;
+    cursor: pointer;
+}

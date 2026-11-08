@@ -4,10 +4,10 @@ import {ChatLayout} from "./ChatLayout.tsx";
 import {ErrorPage} from "./ErrorPage.tsx";
 import SignUp from "../components/auth/signUp/SignUp.tsx";
 import Forget from "../components/auth/forget/Forget.tsx";
-import Profile from "../profile/Profile.tsx";
+import Profile from "../components/profile/Profile.tsx";
 import OTP from "../components/auth/forget/Otp.tsx";
 import Reset from "../components/auth/forget/Reset.tsx";
-import ResetPass from "../profile/ResetPass.tsx";
+import ResetPass from "../components/profile/ResetPass.tsx";
 import {Layout} from "./Layout.tsx";
 
 export const router= createBrowserRouter([
