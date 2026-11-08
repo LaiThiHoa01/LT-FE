@@ -22,11 +22,11 @@ export function registerAPI(username:string, password:string) {
         sendRegister();
     }
 }
-export function loginAPI(username: string, password: string){
+export function loginAPI(username: string, password: string):boolean{
     const socket = getSocket();
     if(!socket){
         console.error("WebSocket chua san sang");
-        return;
+        return false;
     }
     const sendLogin=  () => {
         socket.send(JSON.stringify({
@@ -43,4 +43,5 @@ export function loginAPI(username: string, password: string){
     if(socket.readyState==WebSocket.OPEN){
         sendLogin();
     }
+    return true;
 }
