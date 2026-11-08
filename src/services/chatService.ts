@@ -1,4 +1,4 @@
-import {sendJsonMessage} from "./websocket.ts"
+import {sendJsonMessage} from "./websocketService.ts"
 import type {RoomUserItem} from "../types/chat.ts";
 import {setOnlineStatus, setUserlist} from "../store/slices/chatSlice.ts";
 import {store} from "../store/store.ts";

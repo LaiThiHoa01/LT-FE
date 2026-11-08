@@ -100,4 +100,44 @@
     color: #111111;
     margin-left: 8px;
 }
+.create-room-dialog {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    min-width: 400px;
+    height: fit-content;
+    max-height: 200px;
+    padding: 20px;
+    border: 1px solid #d9d9d9;
+    border-radius: 12px;
+    background: #fff;
+}
+.create-room-dialog form {
+    display: grid;
+    gap: 12px;
+}
+.create-room-dialog input {
+    width: 100%;
+}
+.create-room-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+.create-room-actions button {
+    width: auto;
+    padding: 0 14px;
+}
+.create-room-error {
+    color: #b42318;
+    font-size: 14px;
+}
+.create-room-submit {
+    background-color: #0068ff;
+    color: #fff;
+}
+.cancel-create-room{
+    background-color: #b42318;;
+    color: #fff;
+}
 
