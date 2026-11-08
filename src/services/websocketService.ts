@@ -4,6 +4,18 @@ import {handleChatUser, sendGetUserList} from "./chatService.ts";
 import {store} from "../store/store.ts";
 import {addRoom} from "../store/slices/chatSlice.ts";
 let socket: WebSocket | null = null;
+export interface loginResponse{
+    status: "success" | "error";
+    event: "LOGIN";
+    data?: {
+        RE_LOGIN_CODE: string;
+    };
+    mes?: string;
+}
+const loginLis: ((res: loginResponse)=>void) [] = [];
+export function listenLogin(callback:(res: loginResponse)=>void) {
+    loginLis.push(callback);
+}
 
 export function useWebSocket() {
     useEffect(() => {
@@ -18,6 +30,13 @@ export function useWebSocket() {
         socket.onmessage = (event) => {
             if (active)
                 console.log("dữ liệu", event.data);
+            const res= JSON.parse(event.data) as loginResponse;
+            if(res.event == "LOGIN"){
+                for (const callback of loginLis) {
+                    callback(res);
+                }
+                loginLis.length = 0;
+            }
             let reply;
             try {
                 reply = JSON.parse(String(event.data));

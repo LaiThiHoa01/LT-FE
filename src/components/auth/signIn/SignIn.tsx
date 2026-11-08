@@ -1,8 +1,9 @@
 import "./SignIn.css"
+import "../Auth.css"
 import { useNavigate } from "react-router";
 import {useEffect, useRef, useState} from "react";
 import {loginAPI} from "../../../services/authService.ts";
-import {listenLogin} from "../../../services/websocket.ts";
+import {listenLogin} from "../../../services/websocketService.ts";
 export default function SignIn(){
     const [username, setUsername] = useState("");
     const [password, setPassword]= useState("");
@@ -17,7 +18,7 @@ export default function SignIn(){
             if(res.status =="success"){
                 navigate("/chat");
             } else {
-                setLoginError(res.mes ?? "a");
+                setLoginError(res.mes ?? "Dang nhap that bai");
                 console.log("Dang nhap that bai");
             }
         });
@@ -34,21 +35,21 @@ export default function SignIn(){
 
     return (
         <>
-            <div className="signIn">
+            <div className="auth">
                 <div className="title">
-                    <h1>APP CHAT</h1>
+                    <h1 className="nameTitle">APP CHAT</h1>
                 </div>
-                <div className="input">
-                    <input type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Username"/>
-                    <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu"/>
+                <div className="divInput">
+                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Username"/>
+                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu"/>
                 </div>
-                <div className="btn">
-                    <button id="signIn" onClick={handleLogin}>Đăng nhập</button>
+                <div className="divBtn">
+                    <button className="btnAuth" id="signIn" onClick={handleLogin}>Đăng nhập</button>
                     {/*<button id="forget" onClick={() => navigate('/forget')}>Quên mật khẩu</button>*/}
                 </div>
                 {loginError && <p>{loginError}</p>}
                 <div className="bottom">
-                    <button id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
+                    <button className="btnAuth" id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
                 </div>
             </div>
         </>
