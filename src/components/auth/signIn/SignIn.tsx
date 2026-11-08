@@ -40,17 +40,14 @@ export default function SignIn(){
                     <h1 className="nameTitle">APP CHAT</h1>
                 </div>
                 <div className="divInput">
-                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Username"/>
-                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu"/>
+                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập username"/>
+                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu"/>
                 </div>
                 <div className="divBtn">
                     <button className="btnAuth" id="signIn" onClick={handleLogin}>Đăng nhập</button>
-                    {/*<button id="forget" onClick={() => navigate('/forget')}>Quên mật khẩu</button>*/}
-                </div>
-                {loginError && <p>{loginError}</p>}
-                <div className="bottom">
                     <button className="btnAuth" id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
                 </div>
+                {loginError && <p>{loginError}</p>}
             </div>
         </>
     )

@@ -3,10 +3,19 @@
     font-size: 14px;
     flex-direction: column;
     display: flex;
-    gap: 20px;
+    gap: 22px;
     place-content: center;
     place-items: center;
     flex-grow: 1;
+    box-sizing: border-box;
+    min-width: 450px;
+    margin: 40px auto;
+    padding: 40px;
+    color: #172554;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0px 18px 50px rgba(30, 64, 175, 0.12);
 }
 .nameTitle{
     font-size: 30px;
@@ -24,7 +33,7 @@
     border: 1px solid #83a5af;
     background-color: rgba(0,0,0,0);
     height: 40px;
-    width: 500px;
+    width: 400px;
     padding-left: 10px;
     font-size: 14px;
     outline: #1f2028;
@@ -36,7 +45,7 @@
 }
 .btnAuth{
     height: 35px;
-    width: 500px;
+    width: 400px;
     border-radius: 15px;
     border: none;
     font-size: 14px;

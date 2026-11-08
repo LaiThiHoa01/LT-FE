@@ -48,6 +48,9 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     </form>
                 </div>
                 <ListUser />
+                <div className="sidebar-logout">
+                    <button className="btnLogout" >Đăng xuất</button>
+                </div>
             </div>
             <dialog ref={dialogRef} className={"create-room-dialog"} aria-labelledby="create-room-title">
                 <form onSubmit={handleCreateRoom}>

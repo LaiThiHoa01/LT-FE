@@ -12,16 +12,8 @@ export default function Profile(){
                 </div>
                 <div className="detail">
                     <div className="divname">
-                        <span className="spanProfle">Họ và tên: </span>
+                        <span className="spanProfle">Username: </span>
                         <input className="inputProfile" type="text" value="Phùng Thị Minh Thư" placeholder="Nhập họ và tên của bạn"/>
-                    </div>
-                    <div className="email">
-                        <span className="spanProfle">Email: </span>
-                        <input className="inputProfile" type="email" value="23130317@st.hcmuaf.edu.vn" placeholder="Nhập email của bạn"/>
-                    </div>
-                    <div className="sdt">
-                        <span className="spanProfle">Số di động: </span>
-                        <input className="inputProfile" type="number" value="0123456789" placeholder="Nhập sdt của bạn"/>
                     </div>
                     <div className="pass">
                         <span className="spanProfle">Mật khẩu: </span>
