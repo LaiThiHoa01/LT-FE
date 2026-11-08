@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-
+import {store} from "../store/store.ts";
+import {addRoom} from "../store/slices/chatSlice.ts";
 let socket: WebSocket | null = null;
 
 export function useWebSocket() {
@@ -15,6 +16,21 @@ export function useWebSocket() {
         socket.onmessage = (event) => {
             if (active)
                 console.log("dữ liệu", event.data);
+            let reply;
+            try {
+                reply = JSON.parse(String(event.data));
+                    } catch {
+                        return;
+                }
+            if (reply?.event === 'CREATE_ROOM') {
+                const name = reply.data?.name;
+                if (reply.status === 'success' && typeof name === 'string' && name.trim()) {
+                    store.dispatch(addRoom(name));
+                } else {
+                    const message = typeof reply.mes === 'string' ? reply.mes : 'Tạo phòng thất bại.';
+                    window.alert(message);
+                }
+}
         };
         socket.onerror = (error) => {
             if (active)
@@ -32,6 +48,7 @@ export function useWebSocket() {
         };
     }, []);
 }
+
 export function getSocket() {
     return socket;
 }

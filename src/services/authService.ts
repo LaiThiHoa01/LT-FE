@@ -1,4 +1,4 @@
-import {getSocket} from "./websocket.ts";
+import {getSocket} from "./websocketService.ts";
 
 export function registerAPI(username:string, password:string) {
     const socket = getSocket();

@@ -1,7 +1,18 @@
 import ListUser from "./ListUser.tsx";
 import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
+import {createRoomAPI} from "../../services/roomService.ts";
 
+function handleCreateRoom() {
+    const name = window.prompt('Nhập tên phòng')?.trim();
+    if (!name) return;
+
+    try {
+        createRoomAPI(name);
+    } catch (error) {
+        window.alert(error instanceof Error ? error.message : 'Tạo phòng thất bại.');
+    }
+}
 export default function Sidebar() {
     return (
         <>
@@ -12,7 +23,7 @@ export default function Sidebar() {
                         <span className="my-name">Thân Văn Danh</span>
                     </div>
                     <div className="header-actions">
-                        <button className="action-btn" title="Tạo cuộc trò chuyện / nhóm mới">
+                        <button type="button" className="action-btn" title="Tạo nhóm mới" onClick={handleCreateRoom}>
                             <i className="fa-solid fa-user-plus"></i>
                         </button>
                         <button className="action-btn" title="Cài đặt">
