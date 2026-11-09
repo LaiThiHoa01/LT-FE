@@ -14,8 +14,13 @@ export default function SignIn(){
     useEffect(() => {
         listenLogin(res =>{
             if(!sendUser.current) return;
-            sendUser.current = "";
             if(res.status =="success"){
+                const code = res.data?.RE_LOGIN_CODE;
+                if(code){
+                    localStorage.setItem("username", sendUser.current);
+                    localStorage.setItem("RE_LOGIN_CODE", code);
+                }
+                sendUser.current = "";
                 navigate("/chat");
             } else {
                 setLoginError(res.mes ?? "Dang nhap that bai");

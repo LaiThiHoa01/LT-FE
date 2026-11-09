@@ -3,6 +3,7 @@ import {handleChatUser, sendGetUserList} from "./chatService.ts";
 
 import {store} from "../store/store.ts";
 import {addRoom} from "../store/slices/chatSlice.ts";
+import {reLoginAPI} from "./authService.ts";
 let socket: WebSocket | null = null;
 export interface loginResponse{
     status: "success" | "error";
@@ -26,6 +27,11 @@ export function useWebSocket() {
         socket.onopen = () => {
             if (active)
                 console.log("đã kết nối");
+            const username = localStorage.getItem("username");
+            const password = localStorage.getItem("RE_LOGIN_CODE");
+            if(username && password){
+                reLoginAPI(username, password);
+            }
         };
         socket.onmessage = (event) => {
             if (active)
