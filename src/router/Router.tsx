@@ -3,8 +3,6 @@ import SignIn from "../components/auth/signIn/SignIn.tsx";
 import {ChatLayout} from "./ChatLayout.tsx";
 import {ErrorPage} from "./ErrorPage.tsx";
 import SignUp from "../components/auth/signUp/SignUp.tsx";
-import Profile from "../components/profile/Profile.tsx";
-import ResetPass from "../components/profile/ResetPass.tsx";
 import {Layout} from "./Layout.tsx";
 
 export const router= createBrowserRouter([
@@ -24,14 +22,6 @@ export const router= createBrowserRouter([
             {
                 path: "signUp",
                 element: <SignUp/>
-            },
-            {
-                path: "profile",
-                element: <Profile/>
-            },
-            {
-                path: "resetPass",
-                element: <ResetPass/>
             },
         ]
     },

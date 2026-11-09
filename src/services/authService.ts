@@ -67,3 +67,21 @@ export function reLoginAPI (usename: string, code:string) {
         sendReLogin();
     }
 }
+export function logoutAPI() {
+    const socket = getSocket();
+    if(!socket){
+        console.error("WebSocket chua san sang");
+        return;
+    }
+    const sendLogout=() => {
+        socket.send(JSON.stringify({
+            action: "onchat",
+            data: {
+                event: "LOGOUT",
+            }
+        }))
+    }
+    if(socket.readyState==WebSocket.OPEN){
+        sendLogout();
+    }
+}
