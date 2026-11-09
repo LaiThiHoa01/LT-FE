@@ -3,11 +3,14 @@ import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
 import {createRoomAPI} from "../../services/roomService.ts";
 import {type SubmitEvent, useRef, useState} from "react";
+import {useNavigate} from "react-router";
+import {logoutAPI} from "../../services/authService.ts";
 
 export default function Sidebar() {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [roomName, setRoomName] = useState('');
     const [roomError, setRoomError] = useState('');
+    let navigate = useNavigate();
 
     function openCreateRoom() {
         setRoomName('');
@@ -23,6 +26,12 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         window.alert(error instanceof Error ? error.message : 'Tạo phòng thất bại.');
     }
 }
+
+    function handleLogout() {
+        logoutAPI();
+        navigate('/login');
+    }
+
     return (
         <>
             <div className="list-contact">
@@ -48,6 +57,9 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     </form>
                 </div>
                 <ListUser />
+                <div className="sidebar-logout">
+                    <button className="btnLogout" onClick={handleLogout} >Đăng xuất</button>
+                </div>
             </div>
             <dialog ref={dialogRef} className={"create-room-dialog"} aria-labelledby="create-room-title">
                 <form onSubmit={handleCreateRoom}>

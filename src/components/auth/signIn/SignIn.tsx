@@ -14,8 +14,13 @@ export default function SignIn(){
     useEffect(() => {
         listenLogin(res =>{
             if(!sendUser.current) return;
-            sendUser.current = "";
             if(res.status =="success"){
+                const code = res.data?.RE_LOGIN_CODE;
+                if(code){
+                    localStorage.setItem("username", sendUser.current);
+                    localStorage.setItem("RE_LOGIN_CODE", code);
+                }
+                sendUser.current = "";
                 navigate("/chat");
             } else {
                 setLoginError(res.mes ?? "Dang nhap that bai");
@@ -40,17 +45,14 @@ export default function SignIn(){
                     <h1 className="nameTitle">APP CHAT</h1>
                 </div>
                 <div className="divInput">
-                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Username"/>
-                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu"/>
+                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập username"/>
+                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu"/>
                 </div>
                 <div className="divBtn">
                     <button className="btnAuth" id="signIn" onClick={handleLogin}>Đăng nhập</button>
-                    {/*<button id="forget" onClick={() => navigate('/forget')}>Quên mật khẩu</button>*/}
-                </div>
-                {loginError && <p>{loginError}</p>}
-                <div className="bottom">
                     <button className="btnAuth" id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
                 </div>
+                {loginError && <p>{loginError}</p>}
             </div>
         </>
     )

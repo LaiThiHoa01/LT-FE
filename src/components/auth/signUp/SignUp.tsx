@@ -21,16 +21,8 @@ export default function SignUp(){
                 </div>
                 <div className="divInput">
                     <div className="divname">
-                        <span className="spanSign">Họ và tên: </span>
-                        <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập họ và tên của bạn"/>
-                    </div>
-                    <div className="email">
-                        <span className="spanSign">Email: </span>
-                        <input className="inputAuth" type="email" placeholder="Nhập email của bạn"/>
-                    </div>
-                    <div className="sdt">
-                        <span className="spanSign">Số di động: </span>
-                        <input className="inputAuth" type="number" placeholder="Nhập sdt của bạn"/>
+                        <span className="spanSign">User name: </span>
+                        <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập username của bạn"/>
                     </div>
                     <div className="pass">
                         <span className="spanSign">Mật khẩu: </span>
@@ -41,7 +33,7 @@ export default function SignUp(){
                         <input className="inputAuth" type="password" placeholder="Nhập lại mật khẩu của bạn"/>
                     </div>
                 </div>
-                <div className="divSignUp">
+                <div className="divBtn">
                     <button className="btnAuth" id="signUp" onClick={handleRegister}>Đăng ký</button>
                     <button className="btnAuth" id="had" onClick={() => navigate('/login')}>Tôi đã có tài khoản</button>
                 </div>
