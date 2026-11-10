@@ -134,3 +134,11 @@
     background-color: #f0f2f5;
     color: #0068ff;
 }
+.conversation{
+     display: flex ;
+     align-items: center;
+    justify-content: center;
+}
+.conversation p{
+    color: #9ca3af;
+}
