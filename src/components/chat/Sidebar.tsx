@@ -32,13 +32,15 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         navigate('/login');
     }
 
+    const currentMyUsername = localStorage.getItem("username") || "Người dùng";
+
     return (
         <>
             <div className="list-contact">
                 <div className="sidebar-header">
                     <div className="user-profile">
                         <img src={avatarImg} alt="Avatar" className="my-avatar" />
-                        <span className="my-name">Thân Văn Danh</span>
+                        <span className="my-name">{currentMyUsername}</span>
                     </div>
                     <div className="header-actions">
                         <button type="button" className="action-btn add_group" title="Tạo nhóm mới" onClick={openCreateRoom}>

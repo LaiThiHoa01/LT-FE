@@ -5,6 +5,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useAppDispatch, useAppSelector } from '../../store/store';
 import {addMessage, toggleInfo} from '../../store/slices/chatSlice';
 import type { Message } from '../../types/chat';
+import { sendChatMessage, sendGetPeopleMessages } from '../../services/chatService.ts';
 
 export default function Conversation() {
     const dispatch = useAppDispatch();
@@ -29,12 +30,21 @@ export default function Conversation() {
         scrollToBottom();
     }, [messages]);
 
+    useEffect(() => {
+        if (activeUser?.name) {
+            sendGetPeopleMessages(activeUser.name, 1, activeUser.type);
+        }
+    }, [activeUser?.id]);
+
     const sendMessage = () => {
-        if(inputText.trim() && activeUser){
+        const text = inputText.trim();
+        if(text && activeUser){
+            sendChatMessage(activeUser.name, text, activeUser.type === 1 ? "room" : "people");
+            const myUsername = localStorage.getItem("username") || "me";
             const newMessage: Message = {
-                id:crypto.randomUUID(),
-                senderId:1,
-                text:inputText,
+                id: crypto.randomUUID(),
+                senderId: myUsername,
+                text: text,
                 time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
                 isMe: true
             };
@@ -50,6 +60,13 @@ export default function Conversation() {
         setInputText(prev => prev + emoji.emoji);
     };
 
+    if (!activeUser) {
+        return (
+            <div className="conversation" >
+                <p>Chọn một người để bắt đầu trò chuyện</p>
+            </div>
+        );
+    }
     return (
         <>
             <div className="conversation">

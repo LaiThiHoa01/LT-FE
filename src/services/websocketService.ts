@@ -59,7 +59,10 @@ export function useWebSocket() {
                 }
 }
             const response = JSON.parse(event.data);
-            if(response.event === "LOGIN" && response.status === "success") {
+            if(response.event === "LOGIN" || response.event ==="RE_LOGIN" && response.status === "success") {
+                if (response.data === "RE_LOGIN_CODE") {
+                    localStorage.setItem("RE_LOGIN_CODE", response.data.RE_LOGIN_CODE);
+                }
                 sendGetUserList();
             }
             handleChatUser(response);
