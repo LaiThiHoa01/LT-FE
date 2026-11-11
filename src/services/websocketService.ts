@@ -17,56 +17,68 @@ const loginLis: ((res: loginResponse)=>void) [] = [];
 export function listenLogin(callback:(res: loginResponse)=>void) {
     loginLis.push(callback);
 }
-
 export function useWebSocket() {
     useEffect(() => {
-        var active = true;
+        let active = true;
         socket = new WebSocket(
             "wss://chat.longapp.io.vn/chat/chat"
         );
         socket.onopen = () => {
             if (active)
                 console.log("đã kết nối");
-            const username = localStorage.getItem("username");
-            const password = localStorage.getItem("RE_LOGIN_CODE");
-            if(username && password){
-                reLoginAPI(username, password);
+            if (window.location.pathname.includes("/chat")) {
+                const username = localStorage.getItem("username");
+                const password = localStorage.getItem("RE_LOGIN_CODE");
+                if (username && password) {
+                    reLoginAPI(username, password);
+                }
             }
         };
         socket.onmessage = (event) => {
-            if (active)
-                console.log("dữ liệu", event.data);
-            const res= JSON.parse(event.data) as loginResponse;
-            if(res.event == "LOGIN"){
-                for (const callback of loginLis) {
-                    callback(res);
-                }
-                loginLis.length = 0;
-            }
-            let reply;
+            if (!active) return;
+            let response: any;
             try {
-                reply = JSON.parse(String(event.data));
-                    } catch {
-                        return;
-                }
-            if (reply?.event === 'CREATE_ROOM') {
-                const name = reply.data?.name;
-                if (reply.status === 'success' && typeof name === 'string' && name.trim()) {
-                    store.dispatch(addRoom(name));
+                response = JSON.parse(String(event.data));
+            } catch {
+                return;
+            }
+            console.log("dữ liệu", response);
+            if (response.event === 'CREATE_ROOM') {
+                const name = typeof response.data === 'string' ? response.data : response.data?.name;
+                if (response.status === 'success' && typeof name === 'string' && name.trim()) {
+                    store.dispatch(addRoom(name.trim()));
+                    sendGetUserList();
                 } else {
-                    const message = typeof reply.mes === 'string' ? reply.mes : 'Tạo phòng thất bại.';
+                    const message = typeof response.mes === 'string' ? response.mes : 'Tạo phòng thất bại.';
                     window.alert(message);
                 }
-}
-            const response = JSON.parse(event.data);
-            if(response.event === "LOGIN" || response.event ==="RE_LOGIN" && response.status === "success") {
-                if (response.data === "RE_LOGIN_CODE") {
-                    localStorage.setItem("RE_LOGIN_CODE", response.data.RE_LOGIN_CODE);
+            }
+            if (response.event === "RE_LOGIN" && response.status === "error") {
+                console.warn("Phiên đăng nhập hết hạn", response.mes);
+                localStorage.removeItem("RE_LOGIN_CODE");
+                localStorage.removeItem("username");
+                if (window.location.pathname.includes("/chat")) {
+                    window.location.replace("/login");
+                }
+                return;
+            }
+            // const response = JSON.parse(event.data);
+            if(response.event === "LOGIN" ||response.event ==="RE_LOGIN" && response.status === "success") {
+                const code =response.data?.RE_LOGIN_CODE
+                if(code){
+                    localStorage.setItem("RE_LOGIN_CODE", code);
                 }
                 sendGetUserList();
             }
+            if (response.event === "LOGIN") {
+                for (const callback of loginLis) {
+                    callback(response);
+                }
+                loginLis.length = 0;
+            }
             handleChatUser(response);
         };
+
         socket.onerror = (error) => {
             if (active)
                 console.error("lỗi kết nối", error);

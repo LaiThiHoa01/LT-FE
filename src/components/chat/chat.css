@@ -103,6 +103,7 @@
     flex: 1;
     padding-bottom: 10px;
 
+
 }
 
 .heading {
@@ -135,8 +136,7 @@
     color: #0068ff;
 }
 .conversation{
-     display: flex ;
-     align-items: center;
+    display: flex ;
     justify-content: center;
 }
 .conversation p{
