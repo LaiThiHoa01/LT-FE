@@ -86,7 +86,7 @@ export default function Conversation() {
                         </button>
                     </div>
                 </div>
-                <div className="message-list" style={{ overflowY: 'auto', flex: 1 }}>
+                <div className="message-list">
                     {messages.map((msg) => (
                         <div key={msg.id}
                              className ={msg.isMe ? "message my-message" : "message-receive other-message"}>
