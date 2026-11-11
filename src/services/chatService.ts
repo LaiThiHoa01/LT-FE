@@ -76,16 +76,28 @@ export function sendChatMessage(to: string, mes: string, type: "people" | "room"
 //  lịch sử tn
 export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0) {
     currentChatTarget = { name, type };
-    sendJsonMessage({
-        action: "onchat",
-        data: {
-            event: "CHAT_PEOPLE_GET_MES",
+    if (type === 1) {
+        sendJsonMessage({
+            action: "onchat",
             data: {
-                name: name,
-                page: page,
+                event: "JOIN_ROOM",
+                data: {
+                    name: name,
+                }
             }
-        }
-    });
+        });
+    } else {
+        sendJsonMessage({
+            action: "onchat",
+            data: {
+                event: "CHAT_PEOPLE_GET_MES",
+                data: {
+                    name: name,
+                    page: page,
+                }
+            }
+        });
+    }
 }
 export function handleChatUser(response: any ){
     if(!response) return;
@@ -130,6 +142,7 @@ export function handleChatUser(response: any ){
             store.dispatch(addMessage({ conversationId, message: newMsg }));
             break;
         }
+        case "JOIN_ROOM":
         case "CHAT_PEOPLE_GET_MES": {
             const myUsername = localStorage.getItem("username");
             let rawList: any[] = [];

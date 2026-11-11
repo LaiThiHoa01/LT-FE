@@ -44,9 +44,10 @@ export function useWebSocket() {
             }
             console.log("dữ liệu", response);
             if (response.event === 'CREATE_ROOM') {
-                const name = response.data?.name;
+                const name = typeof response.data === 'string' ? response.data : response.data?.name;
                 if (response.status === 'success' && typeof name === 'string' && name.trim()) {
-                    store.dispatch(addRoom(name));
+                    store.dispatch(addRoom(name.trim()));
+                    sendGetUserList();
                 } else {
                     const message = typeof response.mes === 'string' ? response.mes : 'Tạo phòng thất bại.';
                     window.alert(message);
