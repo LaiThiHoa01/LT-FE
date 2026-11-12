@@ -5,6 +5,32 @@ import {store} from "../store/store.ts";
 
 let currentUser : string | null = null;
 let currentChatTarget: { name: string; type: ChatType } | null = null;
+export function encodeEmoji(text: string): string {
+    if (!text) {
+        return "";
+    }
+    return text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(emoji) {
+        const codePoint = emoji.codePointAt(0);
+        if (codePoint !== undefined) {
+            const hexCode = codePoint.toString(16);
+            return `[e:${hexCode}]`;
+        }
+        return emoji;
+    });
+}
+export function decodeEmoji(text: string): string {
+    if (!text) {
+        return "";
+    }
+    return text.replace(/\[e:([0-9a-fA-F]+)\]/g, function(match, hexString) {
+        const codeNumber = parseInt(hexString, 16);
+        const isInvalid = isNaN(codeNumber) || codeNumber < 0 || codeNumber > 0x10FFFF;
+        if (isInvalid) {
+            return match;
+        }
+        return String.fromCodePoint(codeNumber);
+    });
+}
 export function sendGetUserList(){
     sendJsonMessage({
         action: "onchat",
@@ -35,7 +61,7 @@ export function sendChatMessage(to: string, mes: string, type: "people" | "room"
             data: {
                 type: type,
                 to: to,
-                mes: mes,
+                mes: encodeEmoji(mes),
             }
         }
     });
@@ -102,7 +128,7 @@ export function handleChatUser(response: any ){
             const newMsg: Message = {
                 id: String(Date.now()),
                 senderId: data.name,
-                text: data.mes,
+                text: decodeEmoji(data.mes),
                 time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
                 isMe: false,
             };
@@ -137,7 +163,7 @@ export function handleChatUser(response: any ){
                 return {
                     id: String(item.id),
                     senderId: item.name,
-                    text: item.mes,
+                    text: decodeEmoji(item.mes),
                     time: timeStr,
                     isMe: item.name === myUsername,
                 };
