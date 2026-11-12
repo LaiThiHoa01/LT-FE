@@ -53,6 +53,26 @@ export function useWebSocket() {
                     window.alert(message);
                 }
             }
+            if (response.event === 'JOIN_ROOM') {
+                if (response.status === 'success') {
+                    const roomName = typeof response.data === 'string' ? response.data : response.data?.name;
+                    if (roomName) {
+                        store.dispatch(addRoom(roomName));
+                    }
+                    sendGetUserList();
+                } else {
+                    const message = typeof response.mes === 'string' ? response.mes : 'Tham gia phòng thất bại.';
+                    window.alert(message);
+                }
+            }
+            if (response.event === 'OUT_ROOM') {
+                if (response.status === 'success') {
+                    sendGetUserList();
+                } else {
+                    const message = typeof response.mes === 'string' ? response.mes : 'Rời phòng thất bại.';
+                    window.alert(message);
+                }
+            }
             if (response.event === "RE_LOGIN" && response.status === "error") {
                 console.warn("Phiên đăng nhập hết hạn", response.mes);
                 localStorage.removeItem("RE_LOGIN_CODE");

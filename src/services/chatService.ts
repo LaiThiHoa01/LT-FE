@@ -14,39 +14,6 @@ export function sendGetUserList(){
         }
     })
 }
-export function sendCreateRoom(){
-    sendJsonMessage({
-        action: "onchat",
-        data: {
-            event: "CREATE_ROOM",
-            data: {
-                name : "ABC",
-            }
-        }
-    })
-}
-export function sendJoinRoom(){
-    sendJsonMessage({
-        action: "onchat",
-        data: {
-            event: "JOIN_ROOM",
-            data: {
-                name : "ABC",
-            }
-        }
-    })
-}
-export function sendOutRoom(){
-    sendJsonMessage({
-        action: "onchat",
-        data: {
-            event: "OUT_ROOM",
-            data: {
-                name : "ABC",
-            }
-        }
-    })
-}
 export function sendCheckUserOnline(username : string){
     currentUser = username;
     sendJsonMessage({
