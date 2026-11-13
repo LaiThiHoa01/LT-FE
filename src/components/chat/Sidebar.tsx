@@ -5,11 +5,14 @@ import {createRoomAPI} from "../../services/roomService.ts";
 import {type SubmitEvent, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {logoutAPI} from "../../services/authService.ts";
+import {useAppDispatch} from "../../store/store.ts";
+import {resetChat} from "../../store/slices/chatSlice.ts";
 
 export default function Sidebar() {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [roomName, setRoomName] = useState('');
     const [roomError, setRoomError] = useState('');
+    const dispatch = useAppDispatch();
     let navigate = useNavigate();
 
     function openCreateRoom() {
@@ -29,7 +32,9 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
 
     function handleLogout() {
         logoutAPI();
-        navigate('/login');
+        localStorage.clear();
+        dispatch(resetChat());
+        navigate('/login', {replace: true});
     }
 
     return (

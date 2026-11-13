@@ -1,9 +1,9 @@
 import {createBrowserRouter} from "react-router";
 import SignIn from "../components/auth/signIn/SignIn.tsx";
-import {ChatLayout} from "./ChatLayout.tsx";
 import {ErrorPage} from "./ErrorPage.tsx";
 import SignUp from "../components/auth/signUp/SignUp.tsx";
 import {Layout} from "./Layout.tsx";
+import {PrivateRoute} from "./PrivateRoute.tsx";
 
 export const router= createBrowserRouter([
     {
@@ -27,6 +27,6 @@ export const router= createBrowserRouter([
     },
     {
         path: "chat",
-        element: <ChatLayout/>
+        element: <PrivateRoute/>
     }
 ])
