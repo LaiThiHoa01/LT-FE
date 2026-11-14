@@ -55,8 +55,8 @@ const chatSlice = createSlice({
 
         },
         setUserlist: (state, action: PayloadAction<RoomUserItem[]>) => {
-            const prevUsers = state.users;
-            state.users = action.payload.map(item => {
+            const prevUsers = [...state.users];
+            const newUsers: UserItem[] = action.payload.map(item => {
                 const id = getConversationId(item.name, item.type);
                 const previous = prevUsers.find(user => user.id === id);
                 return {
@@ -69,7 +69,13 @@ const chatSlice = createSlice({
                     lastMessage: previous?.lastMessage,
                     time: previous?.time ?? item.actionTime,
                 };
-            })
+            });
+            state.users = newUsers;
+            for (const prev of prevUsers) {
+                if (prev.type === 1 && !state.users.some(u => u.id === prev.id)) {
+                    state.users.unshift(prev);
+                }
+            }
             const activeUser = state.users.find(
                 user => user.id === state.activeConversationId
             ) ?? state.users[0];

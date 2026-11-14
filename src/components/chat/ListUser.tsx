@@ -1,11 +1,10 @@
 import User from "./User.tsx";
 import type { UserItem } from "../../types/chat.ts";
-// import {closeInfo, setActiveConversation} from "../../store/slices/chatSlice.ts";
 import {setActiveTarget} from "../../store/slices/chatSlice.ts";
 import {useAppSelector, useAppDispatch} from "../../store/store.ts";
-import {sendCheckUserOnline} from "../../services/chatService.ts";
 import "./ListUser.css"
 import {useState} from "react";
+import {sendGetPeopleMessages} from "../../services/chatService.ts";
 
 export default function ListUser({ search = '' }: { search?: string }) {
     const dispatch = useAppDispatch();
@@ -16,9 +15,7 @@ export default function ListUser({ search = '' }: { search?: string }) {
 
     const handleSelect = (user: UserItem) => {
         dispatch(setActiveTarget(user));
-        if(user.type === 0){
-            sendCheckUserOnline(user.name);
-        }
+        sendGetPeopleMessages(user.name.trim(), 1, user.type);
     };
     const filteredUsers = users.filter((user) => {
         const matchType = filter === 'all' || (filter === 'user' ? user.type === 0 : user.type === 1);

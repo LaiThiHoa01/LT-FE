@@ -58,13 +58,7 @@ export function useWebSocket() {
                 }
             }
             if (response.event === 'JOIN_ROOM') {
-                if (response.status === 'success') {
-                    const roomName = typeof response.data === 'string' ? response.data : response.data?.name;
-                    if (roomName) {
-                        store.dispatch(addRoom(roomName));
-                    }
-                    sendGetUserList();
-                } else {
+                if (response.status === 'error') {
                     const message = typeof response.mes === 'string' ? response.mes : 'Tham gia phòng thất bại.';
                     window.alert(message);
                 }

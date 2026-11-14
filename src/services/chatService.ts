@@ -1,6 +1,6 @@
 import {sendJsonMessage} from "./websocketService.ts"
 import type {ChatType, Message, RoomUserItem} from "../types/chat.ts";
-import {addMessage, getConversationId, setMessages, setOnlineStatus, setUserlist} from "../store/slices/chatSlice.ts";
+import {addMessage, addRoom, getConversationId, setMessages, setOnlineStatus, setUserlist} from "../store/slices/chatSlice.ts";
 import {store} from "../store/store.ts";
 
 let currentUser : string | null = null;
@@ -68,7 +68,7 @@ export function sendCheckUserExist(username: string, callback?: (isExist: boolea
 }
 // gửi tn
 export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people") {
-    return sendJsonMessage({
+    sendJsonMessage({
         action: "onchat",
         data: {
             event: "SEND_CHAT",
@@ -80,16 +80,23 @@ export function sendChatMessage(to: string, mes: string, type: "people" | "room"
         }
     });
 }
+let lastRequested: { name: string; type: ChatType; time: number } | null = null;
 //  lịch sử tn
 export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0) {
-    currentChatTarget = { name, type };
+    const trimmedName = name.trim();
+    if (!trimmedName) return;
+    const now = Date.now();
+    if (lastRequested && lastRequested.name === trimmedName && lastRequested.type === type && now - lastRequested.time < 400)
+        return;
+    lastRequested = { name: trimmedName, type, time: now };
+    currentChatTarget = { name: trimmedName, type };
     if (type === 1) {
         sendJsonMessage({
             action: "onchat",
             data: {
                 event: "JOIN_ROOM",
                 data: {
-                    name: name,
+                    name: trimmedName,
                 }
             }
         });
@@ -99,7 +106,7 @@ export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0
             data: {
                 event: "GET_PEOPLE_CHAT_MES",
                 data: {
-                    name: name,
+                    name: trimmedName,
                     page: page,
                 }
             }
@@ -118,6 +125,10 @@ export function handleChatUser(response: any ){
         case "GET_USER_LIST": {
             const list: RoomUserItem[] = response.data;
             store.dispatch(setUserlist(list));
+            const currentActive = store.getState().chat.activeTarget;
+            if (currentActive?.name) {
+                sendGetPeopleMessages(currentActive.name, 1, currentActive.type);
+            }
             break;
         }
         case "CHECK_USER_ONLINE": {
@@ -134,9 +145,11 @@ export function handleChatUser(response: any ){
             const data = response.data;
             if (!data) break;
             const myUsername = localStorage.getItem("username");
-            const isMe = data.name === myUsername;
-            const partnerName = isMe ? data.to : data.name;
-            const chatType = (data.type ?? 0) as ChatType;
+            const isMe = myUsername && data.name && data.name.trim().toLowerCase() === myUsername.trim().toLowerCase();
+            const isRoom = data.type === "room" || data.type === 1 || data.type === "1";
+            const partnerName = isRoom ? data.to : (isMe? data.to : data.name)
+            if(!partnerName) break;
+            const chatType: ChatType = isRoom ? 1 : 0;
             const conversationId = getConversationId(partnerName, chatType);
             if (isMe) break;
             const newMsg: Message = {
@@ -149,24 +162,43 @@ export function handleChatUser(response: any ){
             store.dispatch(addMessage({ conversationId, message: newMsg }));
             break;
         }
+        case "JOIN_ROOM": {
+            const raw = response.data;
+            const roomName = (typeof raw === "string" ? raw : raw?.name) || currentChatTarget?.name;
+            if (!raw || !roomName)
+                break;
+            const myUsername = localStorage.getItem("username");
+            const chatData = raw.chatData || raw.chatMess;
+            const chatList = Array.isArray(chatData) ? chatData : [];
+            const fallbackTime = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+            const messages: Message[] = chatList
+                .map((item: any) => ({
+                    id: String(item.id || Date.now()),
+                    senderId: item.name,
+                    text: decodeEmoji(item.mes),
+                    time: item.createAt?.split(" ")[1]?.slice(0, 5) || item.createAt || fallbackTime,
+                    isMe: item.name === myUsername,
+                }))
+                .sort((a, b) => Number(a.id) - Number(b.id));
+            store.dispatch(addRoom(roomName));
+            store.dispatch(setMessages({
+                conversationId: getConversationId(roomName, 1),
+                messages,
+            }));
+            break;
+        }
         case "GET_PEOPLE_CHAT_MES": {
             const myUsername = localStorage.getItem("username");
             let rawList: any[] = [];
             let partnerName = currentChatTarget?.name;
-            let chatType: ChatType = currentChatTarget?.type ?? 0;
             if (Array.isArray(response.data)) {
                 rawList = response.data;
-                chatType = 0;
                 if (!partnerName && rawList.length > 0) {
                     partnerName = rawList[0].name === myUsername ? rawList[0].to : rawList[0].name;
                 }
-            } else if (response.data && typeof response.data === "object") {
-                rawList = response.data.chatMess || [];
-                partnerName = response.data.name || partnerName;
-                chatType = 1;
             }
             if (!partnerName) break;
-            const conversationId = getConversationId(partnerName, chatType);
+            const conversationId = getConversationId(partnerName, 0);
             const messages: Message[] = rawList.map(item => {
                 let timeStr = "";
                 if (item.createAt) {
