@@ -42,7 +42,7 @@ export function sendCheckUserExist(username: string, callback?: (isExist: boolea
 }
 // gửi tn
 export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people") {
-    sendJsonMessage({
+    return sendJsonMessage({
         action: "onchat",
         data: {
             event: "SEND_CHAT",
@@ -71,7 +71,7 @@ export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0
         sendJsonMessage({
             action: "onchat",
             data: {
-                event: "CHAT_PEOPLE_GET_MES",
+                event: "GET_PEOPLE_CHAT_MES",
                 data: {
                     name: name,
                     page: page,
@@ -83,7 +83,7 @@ export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0
 export function handleChatUser(response: any ){
     if(!response) return;
     if(response.status === "error"){
-        console.error("ERROR: " + response.status);
+        console.error(response.error);
         return;
     }
     if(response.status !== "success") return;
@@ -123,8 +123,7 @@ export function handleChatUser(response: any ){
             store.dispatch(addMessage({ conversationId, message: newMsg }));
             break;
         }
-        case "JOIN_ROOM":
-        case "CHAT_PEOPLE_GET_MES": {
+        case "GET_PEOPLE_CHAT_MES": {
             const myUsername = localStorage.getItem("username");
             let rawList: any[] = [];
             let partnerName = currentChatTarget?.name;
