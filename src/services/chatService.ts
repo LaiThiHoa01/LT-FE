@@ -5,6 +5,8 @@ import {store} from "../store/store.ts";
 
 let currentUser : string | null = null;
 let currentChatTarget: { name: string; type: ChatType } | null = null;
+let checkUserExist: ((isExist: boolean) => void) | null = null;
+
 export function sendGetUserList(){
     sendJsonMessage({
         action: "onchat",
@@ -25,6 +27,18 @@ export function sendCheckUserOnline(username : string){
             }
         }
     })
+}
+export function sendCheckUserExist(username: string, callback?: (isExist: boolean) => void) {
+    checkUserExist = callback || null;
+    sendJsonMessage({
+        action: "onchat",
+        data: {
+            event: "CHECK_USER_EXIST",
+            data: {
+                user: username.trim(),
+            }
+        }
+    });
 }
 // gửi tn
 export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people") {
@@ -145,6 +159,14 @@ export function handleChatUser(response: any ){
             // sắp xếp tn
             messages.sort((a, b) => Number(a.id) - Number(b.id));
             store.dispatch(setMessages({ conversationId, messages }));
+            break;
+        }
+        case "CHECK_USER_EXIST": {
+            if (checkUserExist) {
+                const isExist = response.data?.status === true;
+                checkUserExist(isExist);
+                checkUserExist = null;
+            }
             break;
         }
         default:
