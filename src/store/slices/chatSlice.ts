@@ -87,6 +87,22 @@ const chatSlice = createSlice({
                 state.activeTarget = { ...user };
             }
         },
+        addConnectUser: (state, action: PayloadAction<string>) => {
+            const name = action.payload.trim();
+            if(!name) return;
+            const id = getConversationId(name, 0);
+            if(!state.users.some(user => user.id === id)) {
+                state.users.unshift({
+                    id,
+                    name,
+                    type: 0,
+                    img: avatar,
+                    isOnline: false,
+                    unreadCount: 0,
+                });
+            }
+            selectConversation(state, id);
+        },
         addMessage: (state, action: PayloadAction<{ conversationId: string; message: Message }>) => {
             const { conversationId, message } = action.payload;
             const text = message.text.trim();
@@ -147,5 +163,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus, addMessage, toggleInfo, closeInfo, openInfo,setMessages } = chatSlice.actions;
+export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus,addConnectUser, addMessage, toggleInfo, closeInfo, openInfo,setMessages } = chatSlice.actions;
 export default chatSlice.reducer;
