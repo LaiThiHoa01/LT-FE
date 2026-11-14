@@ -6,16 +6,22 @@ import {type SubmitEvent, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {logoutAPI} from "../../services/authService.ts";
 import {useAppDispatch} from "../../store/store.ts";
-import {resetChat} from "../../store/slices/chatSlice.ts";
+import {addConnectUser} from "../../store/slices/chatSlice.ts";
+import {sendCheckUserExist} from "../../services/chatService.ts";
 
 export default function Sidebar() {
     const dialogRef = useRef<HTMLDialogElement>(null);
     const [roomName, setRoomName] = useState('');
     const [roomError, setRoomError] = useState('');
-    const dispatch = useAppDispatch();
     let navigate = useNavigate();
     const joinDialogRef = useRef<HTMLDialogElement>(null);
     const [joinRoomName, setJoinRoomName] = useState('');
+    const dispatch = useAppDispatch();
+    const addUserDialogRef = useRef<HTMLDialogElement>(null);
+    const [addUsername, setAddUsername] = useState('');
+    const [addUserError, setAddUserError] = useState('');
+    const [isChecking, setIsChecking] = useState(false);
+    const [search, setSearch] = useState('');
 
     function openCreateRoom() {
         setRoomName('');
@@ -44,11 +50,36 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
             window.alert('Tham gia phòng thất bại.');
         }
     }
+    function openAddUser() {
+        setAddUsername('');
+        setAddUserError('');
+        addUserDialogRef.current?.showModal();
+    }
+
+    function handleAddUsername(event: SubmitEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const targetUser = addUsername.trim();
+        const myUsername = localStorage.getItem("username");
+        if (!targetUser) return;
+        if (targetUser === myUsername) {
+            setAddUserError("Bạn không thể tự kết bạn với chính mình!");
+            return;
+        }
+        setIsChecking(true);
+        setAddUserError('');
+        sendCheckUserExist(targetUser, (isExist) => {
+            setIsChecking(false);
+            if (isExist) {
+                dispatch(addConnectUser(targetUser));
+                addUserDialogRef.current?.close();
+            } else {
+                setAddUserError(`Tài khoản "${targetUser}" không tồn tại!`);
+            }
+        });
+    }
     function handleLogout() {
         logoutAPI();
-        localStorage.clear();
-        dispatch(resetChat());
-        navigate('/login', {replace: true});
+        navigate('/login');
     }
 
     const currentMyUsername = localStorage.getItem("username") || "Người dùng";
@@ -68,19 +99,20 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                         <button type="button" className="action-btn" title="Tham gia phòng" onClick={openJoinRoom}>
                             <i className="fa-solid fa-door-open"></i>
                         </button>
-                        <button className="action-btn" title="Thêm người dùng">
+                        <button className="action-btn" title="Thêm người dùng" onClick={openAddUser}>
                             <i className="fa-solid fa-user-plus"></i>
                         </button>
                     </div>
                 </div>
                 <div className="search-contact">
-                    <form action="/search" method="get">
-                        <input type="text" className="search-input" placeholder=""/>
-                        <button className="search" type="submit"><i className="fa-solid fa-magnifying-glass"></i>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <input type="text" className="search-input" placeholder="Tìm kiếm người dùng, nhóm..." value={search} onChange={(e) => setSearch(e.target.value)}/>
+                        <button className="search" type="button">
+                            <i className="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
                 </div>
-                <ListUser />
+                <ListUser search={search} />
                 <div className="sidebar-logout">
                     <button className="btnLogout" onClick={handleLogout} >Đăng xuất</button>
                 </div>
@@ -107,6 +139,23 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     <div className="create-room-actions">
                         <button type="button" className="cancel-create-room" onClick={() => joinDialogRef.current?.close()}>Hủy</button>
                         <button type="submit" className="create-room-submit">Tham gia</button>
+                    </div>
+                </form>
+            </dialog>
+            <dialog ref={addUserDialogRef} className="create-room-dialog" aria-labelledby="add-user-title">
+                <form onSubmit={handleAddUsername}>
+                    <h2 id="add-user-title">Nhắn tin với người dùng</h2>
+                    <label htmlFor="add-user-name">Username bạn bè</label>
+                    <input id="add-user-name" placeholder="Nhập username muốn bắt đầu chat" value={addUsername} onChange={e => {
+                        setAddUsername(e.target.value);
+                        setAddUserError('');
+                    }} required/>
+                    {addUserError && (
+                        <p className="create-room-error" role="alert">{addUserError}</p>
+                    )}
+                    <div className="create-room-actions">
+                        <button type="button" className="cancel-create-room" onClick={() => addUserDialogRef.current?.close()}>Hủy</button>
+                        <button type="submit" className="create-room-submit" disabled={isChecking}>{isChecking ? "Đang kiểm tra..." : "Bắt đầu chat"}</button>
                     </div>
                 </form>
             </dialog>

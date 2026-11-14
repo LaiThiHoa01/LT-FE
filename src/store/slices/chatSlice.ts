@@ -55,8 +55,8 @@ const chatSlice = createSlice({
 
         },
         setUserlist: (state, action: PayloadAction<RoomUserItem[]>) => {
-            const prevUsers = state.users;
-            state.users = action.payload.map(item => {
+            const prevUsers = [...state.users];
+            const newUsers: UserItem[] = action.payload.map(item => {
                 const id = getConversationId(item.name, item.type);
                 const previous = prevUsers.find(user => user.id === id);
                 return {
@@ -69,7 +69,13 @@ const chatSlice = createSlice({
                     lastMessage: previous?.lastMessage,
                     time: previous?.time ?? item.actionTime,
                 };
-            })
+            });
+            state.users = newUsers;
+            for (const prev of prevUsers) {
+                if (prev.type === 1 && !state.users.some(u => u.id === prev.id)) {
+                    state.users.unshift(prev);
+                }
+            }
             const activeUser = state.users.find(
                 user => user.id === state.activeConversationId
             ) ?? state.users[0];
@@ -86,6 +92,22 @@ const chatSlice = createSlice({
             if (state.activeConversationId === id) {
                 state.activeTarget = { ...user };
             }
+        },
+        addConnectUser: (state, action: PayloadAction<string>) => {
+            const name = action.payload.trim();
+            if(!name) return;
+            const id = getConversationId(name, 0);
+            if(!state.users.some(user => user.id === id)) {
+                state.users.unshift({
+                    id,
+                    name,
+                    type: 0,
+                    img: avatar,
+                    isOnline: false,
+                    unreadCount: 0,
+                });
+            }
+            selectConversation(state, id);
         },
         addMessage: (state, action: PayloadAction<{ conversationId: string; message: Message }>) => {
             const { conversationId, message } = action.payload;
@@ -147,5 +169,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus, addMessage, toggleInfo, closeInfo, openInfo,setMessages } = chatSlice.actions;
+export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus,addConnectUser, addMessage, toggleInfo, closeInfo, openInfo,setMessages } = chatSlice.actions;
 export default chatSlice.reducer;

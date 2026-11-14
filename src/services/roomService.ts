@@ -1,4 +1,5 @@
 import {getSocket, sendJsonMessage} from './websocketService.ts';
+import {sendGetPeopleMessages} from './chatService.ts';
 
 export function createRoomAPI(name: string) {
     const roomName = name.trim();
@@ -20,15 +21,7 @@ export function createRoomAPI(name: string) {
 export function sendJoinRoom(name: string) {
     const roomName = name.trim();
     if (!roomName) return;
-    sendJsonMessage({
-        action: "onchat",
-        data: {
-            event: "JOIN_ROOM",
-            data: {
-                name : roomName,
-            }
-        }
-    })
+    sendGetPeopleMessages(roomName, 1, 1);
 }
 export function sendOutRoom(name: string) {
     const roomName = name.trim();
