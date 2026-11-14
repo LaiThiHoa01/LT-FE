@@ -20,12 +20,16 @@ export function listenLogin(callback:(res: loginResponse)=>void) {
 export function useWebSocket() {
     useEffect(() => {
         let active = true;
+        let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+
+        if (socket?.readyState === WebSocket.OPEN || socket?.readyState === WebSocket.CONNECTING) return;
         socket = new WebSocket(
             "wss://chat.longapp.io.vn/chat/chat"
         );
-        socket.onopen = () => {
-            if (active)
-                console.log("đã kết nối");
+        let currentSocket = socket;
+        socket.onopen = (event) => {
+            if (!active || event.currentTarget !== socket) return;
+            console.log("đã kết nối");
             if (window.location.pathname.includes("/chat")) {
                 const username = localStorage.getItem("username");
                 const password = localStorage.getItem("RE_LOGIN_CODE");
@@ -35,7 +39,7 @@ export function useWebSocket() {
             }
         };
         socket.onmessage = (event) => {
-            if (!active) return;
+            if (!active || event.currentTarget !== socket) return;
             let response: any;
             try {
                 response = JSON.parse(String(event.data));
@@ -82,8 +86,7 @@ export function useWebSocket() {
                 }
                 return;
             }
-            // const response = JSON.parse(event.data);
-            if(response.event === "LOGIN" ||response.event ==="RE_LOGIN" && response.status === "success") {
+            if((response.event === "LOGIN" || response.event === "RE_LOGIN") && response.status === "success") {
                 const code =response.data?.RE_LOGIN_CODE
                 if(code){
                     localStorage.setItem("RE_LOGIN_CODE", code);
@@ -100,24 +103,45 @@ export function useWebSocket() {
         };
 
         socket.onerror = (error) => {
-            if (active)
-                console.error("lỗi kết nối", error);
+            if (!active || error.currentTarget !== socket) return;
+            console.error("lỗi kết nối", error);
         };
-        socket.onclose = () => {
-            if (active)
-                console.log("ngắt kết nối");
+        socket.onclose = (event) => {
+            if (!active || event.currentTarget !== socket) return;
+            console.warn("ngắt kết nối", event.code, event.reason);
+            socket = null;
+            if (reconnectTimer === null) {
+                reconnectTimer = setTimeout(() => {
+                    reconnectTimer = null;
+                    if (!active || socket?.readyState === WebSocket.OPEN || socket?.readyState === WebSocket.CONNECTING) return;
+                    socket = new WebSocket(currentSocket.url);
+                    socket.onopen = currentSocket.onopen;
+                    socket.onmessage = currentSocket.onmessage;
+                    socket.onerror = currentSocket.onerror;
+                    socket.onclose = currentSocket.onclose;
+                    currentSocket = socket;
+                }, 3000);
+            }
         };
         return () => {
             active = false;
-            if(socket!=null) {
-                socket.close();
+            if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+            if (socket === currentSocket) {
+                socket = null;
             }
+            currentSocket.close();
         };
     }, []);
 }
-export function sendJsonMessage(payload: object) {
-    if(socket && socket.readyState == WebSocket.OPEN)
+export function sendJsonMessage(payload: object): boolean {
+    if (!socket || socket.readyState !== WebSocket.OPEN) return false;
+    try {
         socket.send(JSON.stringify(payload));
+        return true;
+    } catch (error) {
+        console.error("không thể gửi dữ liệu", error);
+        return false;
+    }
 }
 export function getSocket() {
     return socket;

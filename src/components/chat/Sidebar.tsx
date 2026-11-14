@@ -21,6 +21,7 @@ export default function Sidebar() {
     const [addUsername, setAddUsername] = useState('');
     const [addUserError, setAddUserError] = useState('');
     const [isChecking, setIsChecking] = useState(false);
+    const [search, setSearch] = useState('');
 
     function openCreateRoom() {
         setRoomName('');
@@ -104,13 +105,14 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     </div>
                 </div>
                 <div className="search-contact">
-                    <form action="/search" method="get">
-                        <input type="text" className="search-input" placeholder=""/>
-                        <button className="search" type="submit"><i className="fa-solid fa-magnifying-glass"></i>
+                    <form onSubmit={(e) => e.preventDefault()}>
+                        <input type="text" className="search-input" placeholder="Tìm kiếm người dùng, nhóm..." value={search} onChange={(e) => setSearch(e.target.value)}/>
+                        <button className="search" type="button">
+                            <i className="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
                 </div>
-                <ListUser />
+                <ListUser search={search} />
                 <div className="sidebar-logout">
                     <button className="btnLogout" onClick={handleLogout} >Đăng xuất</button>
                 </div>

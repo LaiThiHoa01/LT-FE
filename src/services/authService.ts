@@ -24,7 +24,7 @@ export function registerAPI(username:string, password:string) {
 }
 export function loginAPI(username: string, password: string):boolean{
     const socket = getSocket();
-    if(!socket){
+    if(!socket || socket.readyState !== WebSocket.OPEN){
         console.error("WebSocket chua san sang");
         return false;
     }

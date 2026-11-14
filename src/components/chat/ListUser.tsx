@@ -6,7 +6,8 @@ import {useAppSelector, useAppDispatch} from "../../store/store.ts";
 import {sendCheckUserOnline} from "../../services/chatService.ts";
 import "./ListUser.css"
 import {useState} from "react";
-export default function ListUser() {
+
+export default function ListUser({ search = '' }: { search?: string }) {
     const dispatch = useAppDispatch();
     const users = useAppSelector((state) => state.chat.users);
     const activeTarget = useAppSelector((state) => state.chat.activeTarget);
@@ -20,9 +21,9 @@ export default function ListUser() {
         }
     };
     const filteredUsers = users.filter((user) => {
-        if (filter === 'user') return user.type === 0;
-        if (filter === 'room') return user.type === 1;
-        return true;
+        const matchType = filter === 'all' || (filter === 'user' ? user.type === 0 : user.type === 1);
+        const matchSearch = user.name.toLowerCase().includes(search.toLowerCase().trim());
+        return matchType && matchSearch;
     });
     return (
         <div className="list-user-container">
