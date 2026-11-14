@@ -21,3 +21,30 @@
 .user-list::-webkit-scrollbar-thumb:hover {
     background-color: #9ca3af;
 }
+.list-user-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    background-color: #ffffff;
+}
+.filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+    border-bottom: 1px solid #f0f0f0;
+}
+.filter-select {
+    border: none;
+    background: transparent;
+    color: #0068ff;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    outline: none;
+    padding: 2px 4px;
+}

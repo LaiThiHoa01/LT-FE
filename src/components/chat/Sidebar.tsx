@@ -1,7 +1,7 @@
 import ListUser from "./ListUser.tsx";
 import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
-import {createRoomAPI} from "../../services/roomService.ts";
+import {createRoomAPI, sendJoinRoom} from "../../services/roomService.ts";
 import {type SubmitEvent, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {logoutAPI} from "../../services/authService.ts";
@@ -14,6 +14,8 @@ export default function Sidebar() {
     const [roomError, setRoomError] = useState('');
     const dispatch = useAppDispatch();
     let navigate = useNavigate();
+    const joinDialogRef = useRef<HTMLDialogElement>(null);
+    const [joinRoomName, setJoinRoomName] = useState('');
 
     function openCreateRoom() {
         setRoomName('');
@@ -29,7 +31,19 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         window.alert(error instanceof Error ? error.message : 'Tạo phòng thất bại.');
     }
 }
-
+    function openJoinRoom() {
+        setJoinRoomName('');
+        joinDialogRef.current?.showModal();
+    }
+    function handleJoinRoom(event: SubmitEvent<HTMLFormElement>) {
+        event.preventDefault();
+        try {
+            sendJoinRoom(joinRoomName);
+            joinDialogRef.current?.close();
+        } catch (error) {
+            window.alert('Tham gia phòng thất bại.');
+        }
+    }
     function handleLogout() {
         logoutAPI();
         localStorage.clear();
@@ -37,17 +51,22 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         navigate('/login', {replace: true});
     }
 
+    const currentMyUsername = localStorage.getItem("username") || "Người dùng";
+
     return (
         <>
             <div className="list-contact">
                 <div className="sidebar-header">
                     <div className="user-profile">
                         <img src={avatarImg} alt="Avatar" className="my-avatar" />
-                        <span className="my-name">Thân Văn Danh</span>
+                        <span className="my-name">{currentMyUsername}</span>
                     </div>
                     <div className="header-actions">
                         <button type="button" className="action-btn add_group" title="Tạo nhóm mới" onClick={openCreateRoom}>
                             <i className="fa-solid fa-users"></i>
+                        </button>
+                        <button type="button" className="action-btn" title="Tham gia phòng" onClick={openJoinRoom}>
+                            <i className="fa-solid fa-door-open"></i>
                         </button>
                         <button className="action-btn" title="Thêm người dùng">
                             <i className="fa-solid fa-user-plus"></i>
@@ -77,6 +96,17 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     <div className="create-room-actions">
                         <button type="button" className="cancel-create-room" onClick={() => dialogRef.current?.close()}>Hủy</button>
                         <button type="submit" className="create-room-submit">Tạo nhóm</button>
+                    </div>
+                </form>
+            </dialog>
+            <dialog ref={joinDialogRef} className="create-room-dialog" aria-labelledby="join-room-title">
+                <form onSubmit={handleJoinRoom}>
+                    <h2 id="join-room-title">Tham gia phòng chat</h2>
+                    <label htmlFor="join-room-name">Tên phòng</label>
+                    <input id="join-room-name" placeholder="Tên phòng sẽ tham gia" value={joinRoomName} onChange={e => setJoinRoomName(e.target.value)} required/>
+                    <div className="create-room-actions">
+                        <button type="button" className="cancel-create-room" onClick={() => joinDialogRef.current?.close()}>Hủy</button>
+                        <button type="submit" className="create-room-submit">Tham gia</button>
                     </div>
                 </form>
             </dialog>

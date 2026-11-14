@@ -2,6 +2,7 @@ import "./UserInfo.css";
 import defaultAvatar from "../../assets/woman_7185906.png";
 import {useAppDispatch, useAppSelector} from "../../store/store.ts";
 import {closeInfo} from "../../store/slices/chatSlice.ts";
+import {sendOutRoom} from "../../services/roomService.ts";
 
 export default function UserInfo() {
     const dispatch = useAppDispatch();
@@ -9,7 +10,15 @@ export default function UserInfo() {
 
     const userName = activeTarget?.name || "User";
     const userImg = activeTarget?.img || defaultAvatar;
-
+    const isRoom = activeTarget?.type === 1;
+    const handleLeaveRoom = () => {
+        if (!activeTarget) return;
+        const confirmLeave = window.confirm(`Bạn có chắc muốn rời nhóm "${activeTarget.name}" không?`);
+        if (confirmLeave) {
+            sendOutRoom(activeTarget.name);
+            dispatch(closeInfo());
+        }
+    };
     return (
         <div className="chat-info-panel">
             <div className="panel-header">
@@ -29,10 +38,16 @@ export default function UserInfo() {
                         <i className="fa-regular fa-bell-slash"></i>
                         <span>Tắt thông báo</span>
                     </button>
-                    <button className="quick-btn danger">
-                        <i className="fa-solid fa-ban"></i>
-                        <span>Chặn tin nhắn</span>
-                    </button>
+                    {isRoom ?
+                        (<button className="quick-btn danger" onClick={handleLeaveRoom}>
+                            <i className="fa-solid fa-right-from-bracket"></i>
+                            <span>Rời nhóm</span>
+                        </button>
+                        ) : (
+                        <button className="quick-btn danger">
+                            <i className="fa-solid fa-ban"></i>
+                            <span>Chặn tin nhắn</span>
+                        </button>)}
                 </div>
                 <div className="panel-section">
                     <div className="section-title">

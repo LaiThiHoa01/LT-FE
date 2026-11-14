@@ -5,20 +5,11 @@ import type {ChatState, Message, UserItem, RoomUserItem, ChatType} from '../../t
 export function getConversationId(name: string, type: ChatType): string {
     return JSON.stringify([name, type]);
 }
-const hoaId = getConversationId('Lai Thi Hoa', 0);
-const danhId = getConversationId('Than Văn Danh', 0);
-
-const initialUser : UserItem[] = [
-    { id: hoaId, name: 'Lai Thi Hoa',type:0, img: avatar, isOnline: true, unreadCount: 2, lastMessage: 'Hello, how r u?', time: '20:00 PM' },
-    { id: danhId, name: 'Than Văn Danh',type:0, img: avatar, isOnline: true, unreadCount: 1, lastMessage: 'Hello, how r u?', time: '9:00 PM' }]
 const initialState: ChatState = {
-    users: initialUser,
-    activeConversationId: hoaId,
-    activeTarget: {...initialUser[0]},
-    messagesByUser: {
-        [hoaId]: [{ id: 'm1', senderId: 1, text: 'Hello, how r u?', time: '20:00 PM', isMe: false }],
-        [danhId]: [{ id: 'm2', senderId: 1, text: 'Hello, how r u?', time: '(9:00 PM', isMe: false }],
-    },
+    users: [],
+    activeConversationId: null,
+    activeTarget: null,
+    messagesByUser: {},
     isInfoOpen: false,
 };
 function selectConversation(state: ChatState, id: string) {
@@ -101,12 +92,48 @@ const chatSlice = createSlice({
             const text = message.text.trim();
             if (!text) return;
             const messages = state.messagesByUser[conversationId] ??= [];
-            messages.push({...message, text});
-            const user = state.users.find(u => u.id === conversationId);
-
-            if (!user) return;
+            const isDuplicate = messages.some(m => m.id === message.id);
+            if (!isDuplicate) {
+                messages.push({ ...message, text });
+            }
+            let user = state.users.find(u => u.id === conversationId);
+            if (!user){
+                try {
+                    const [name, type] = JSON.parse(conversationId);
+                    user = {
+                        id: conversationId,
+                        name,
+                        type,
+                        img: avatar,
+                        unreadCount: 0,
+                    };
+                    state.users.unshift(user);
+                } catch {
+                    return;
+                }
+            }
             user.lastMessage = text;
-            user.time = message.time
+            user.time = message.time;
+            if (!message.isMe && state.activeConversationId !== conversationId) {
+                user.unreadCount = (user.unreadCount || 0) + 1;
+            }
+            const userIndex = state.users.findIndex(u => u.id === conversationId);
+            if (userIndex > 0) {
+                const [targetUser] = state.users.splice(userIndex, 1);
+                state.users.unshift(targetUser);
+            }
+        },
+        setMessages: (state, action: PayloadAction<{ conversationId: string; messages: Message[] }>) => {
+             const { conversationId, messages } = action.payload;
+             state.messagesByUser[conversationId] = messages;
+            if (messages.length > 0) {
+                const lastMsg = messages[messages.length - 1];
+                const user = state.users.find(u => u.id === conversationId);
+                if (user && !user.lastMessage) {
+                    user.lastMessage = lastMsg.text;
+                    user.time = lastMsg.time;
+                }
+            }
         },
         toggleInfo: (state) => { 
             state.isInfoOpen = !state.isInfoOpen; 
@@ -120,5 +147,5 @@ const chatSlice = createSlice({
     },
 });
 
-export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus, addMessage, toggleInfo, closeInfo, openInfo } = chatSlice.actions;
+export const {addRoom, resetChat, setActiveConversation,setActiveTarget, setUserlist, setOnlineStatus, addMessage, toggleInfo, closeInfo, openInfo,setMessages } = chatSlice.actions;
 export default chatSlice.reducer;

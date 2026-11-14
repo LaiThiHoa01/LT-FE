@@ -118,6 +118,9 @@
 }
 .create-room-dialog input {
     width: 100%;
+    padding: 7px 12px;
+    border-radius: 10px;
+    border: 1px solid #d9d9d9;
 }
 .create-room-actions {
     display: flex;
@@ -126,7 +129,12 @@
 }
 .create-room-actions button {
     width: auto;
-    padding: 0 14px;
+    padding: 7px 15px;
+    border: 0;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 19px;
+    cursor: pointer;
 }
 .create-room-error {
     color: #b42318;
