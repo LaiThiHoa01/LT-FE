@@ -72,8 +72,11 @@ export default function Conversation() {
             <div className="conversation">
                 <div className="heading">
                     <div className="heading-left">
-                        <div className="heading-avatar">
-                            <img src={currentUserImg} alt="" />
+                        <div className={`heading-avatar ${activeUser.type === 1 ? "card-avatar-box room-avatar" : ""}`}>
+                            {activeUser?.type === 1 ? (
+                                <div className="room-icon-placeholder">
+                                    <i className="fa-solid fa-users"></i>
+                                </div>) : (<img src={currentUserImg} alt="" />)}
                         </div>
                         <div className="heading-text">
                             {currentUserName}
@@ -88,8 +91,12 @@ export default function Conversation() {
                 </div>
                 <div className="message-list">
                     {messages.map((msg) => (
-                        <div key={msg.id}
-                             className ={msg.isMe ? "message my-message" : "message-receive other-message"}>
+                        <div key={msg.id} className={msg.isMe ? "message my-message" : "message-receive other-message"}>
+                            {!msg.isMe && activeUser?.type === 1 && (
+                                <div style={{ fontSize: '11px', fontWeight: 600, color: '#0068ff', marginBottom: '2px' }}>
+                                    {msg.senderId}
+                                </div>
+                            )}
                             <span>{msg.text}</span>
                             <div className="time-send"> {msg.time}</div>
                         </div>
