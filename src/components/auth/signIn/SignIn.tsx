@@ -4,11 +4,14 @@ import { useNavigate } from "react-router";
 import {useEffect, useRef, useState} from "react";
 import {loginAPI} from "../../../services/authService.ts";
 import {listenLogin} from "../../../services/websocketService.ts";
+import {useAppDispatch} from "../../../store/store.ts";
+import {setAuth} from "../../../store/slices/authSlice.ts";
 export default function SignIn(){
     const [username, setUsername] = useState("");
     const [password, setPassword]= useState("");
     const [loginError, setLoginError]= useState("");
     const sendUser = useRef("");
+    const dispatch = useAppDispatch();
     let navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +22,7 @@ export default function SignIn(){
                 if(code){
                     localStorage.setItem("username", sendUser.current);
                     localStorage.setItem("RE_LOGIN_CODE", code);
+                    dispatch(setAuth());
                 }
                 sendUser.current = "";
                 navigate("/chat");
