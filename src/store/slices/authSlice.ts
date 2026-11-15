@@ -1,7 +1,7 @@
 import {createSlice} from "@reduxjs/toolkit";
 
 const authSlice= createSlice({
-    name:'chat',
+    name:'auth',
     initialState:{
         isAuth: Boolean(localStorage.getItem("username")&&localStorage.getItem("RE_LOGIN_CODE"))
     },

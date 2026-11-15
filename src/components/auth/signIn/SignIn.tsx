@@ -1,7 +1,7 @@
 import "./SignIn.css"
 import "../Auth.css"
 import { useNavigate } from "react-router";
-import {useEffect, useRef, useState} from "react";
+import {type FormEvent, useEffect, useRef, useState} from "react";
 import {loginAPI} from "../../../services/authService.ts";
 import {listenLogin} from "../../../services/websocketService.ts";
 import {useAppDispatch} from "../../../store/store.ts";
@@ -19,12 +19,18 @@ export default function SignIn(){
             if(!sendUser.current) return;
             if(res.status =="success"){
                 const code = res.data?.RE_LOGIN_CODE;
+                if(!code){
+                    console.log("Không trả RE_LOGIN_CODE");
+                    sendUser.current="";
+                    return;
+                }
                 if(code){
                     localStorage.setItem("username", sendUser.current);
                     localStorage.setItem("RE_LOGIN_CODE", code);
                     dispatch(setAuth());
                 }
                 sendUser.current = "";
+                console.log("Điều hướng chat từ SignIn");
                 navigate("/chat");
             } else {
                 setLoginError(res.mes ?? "Dang nhap that bai");
@@ -32,10 +38,16 @@ export default function SignIn(){
             }
         });
     }, [navigate]);
-    function handleLogin() {
+    function handleLogin(event:FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        const us=username.trim();
+        if(!us||!password){
+            setLoginError("Vui lòng nhập tên đăng nhập và mật khẩu")
+            return;
+        }
         setLoginError("");
-        sendUser.current = username;
-        const send = loginAPI(username, password);
+        sendUser.current = us;
+        const send = loginAPI(us, password);
         if(!send){
             sendUser.current = "";
             setLoginError("WebSocket chua san sang")
@@ -48,12 +60,14 @@ export default function SignIn(){
                 <div className="title">
                     <h1 className="nameTitle">APP CHAT</h1>
                 </div>
+                <form onSubmit={handleLogin}>
                 <div className="divInput">
-                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập username"/>
-                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu"/>
+                    <input className="inputAuth" type="text" value={username} onChange={(e)=>setUsername(e.target.value)} placeholder="Nhập username" required/>
+                    <input className="inputAuth" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Nhập mật khẩu" required/>
+                    <button className="btnAuth" id="signIn">Đăng nhập</button>
                 </div>
+                </form>
                 <div className="divBtn">
-                    <button className="btnAuth" id="signIn" onClick={handleLogin}>Đăng nhập</button>
                     <button className="btnAuth" id="signUp" onClick={() => navigate('/signUp') }>Tạo tài khoản mới</button>
                 </div>
                 {loginError && <p>{loginError}</p>}
