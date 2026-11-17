@@ -29,17 +29,25 @@ export default function UserInfo() {
             </div>
             <div className="panel-body">
                 <div className="panel-profile">
-                    <img src={userImg} alt={userName} className="big-avatar"/>
+                    {isRoom ? (
+                        <div className="room-avatar-big">
+                            <i className="fa-solid fa-users"></i>
+                        </div>
+                    ) : (
+                        <img src={userImg} alt={userName} className="big-avatar"/>
+                    )}
                     <h4 className="profile-name">{userName}</h4>
-                    <span className="profile-status">{activeTarget?.isOnline?"Đang hoạt động":"Không hoạt động"}</span>
+                    <span className={`profile-status ${isRoom ? "" : (activeTarget?.isOnline ? "online" : "offline")}`}>
+                        {isRoom ? "Nhóm trò chuyện" : (activeTarget?.isOnline?"Đang hoạt động":"Không hoạt động")}
+                    </span>
                 </div>
                 <div className="panel-quick-actions">
                     <button className="quick-btn">
                         <i className="fa-regular fa-bell-slash"></i>
                         <span>Tắt thông báo</span>
                     </button>
-                    {isRoom ?
-                        (<button className="quick-btn danger" onClick={handleLeaveRoom}>
+                    {isRoom ? (
+                        <button className="quick-btn danger" onClick={handleLeaveRoom}>
                             <i className="fa-solid fa-right-from-bracket"></i>
                             <span>Rời nhóm</span>
                         </button>
@@ -52,35 +60,21 @@ export default function UserInfo() {
                 <div className="panel-section">
                     <div className="section-title">
                         <span>Hình ảnh / Media</span>
-                        <span className="count">4 ảnh</span>
+                        <span className="count">0 ảnh</span>
                     </div>
-                    <div className="media-grid">
-                        <img src={userImg} alt="1"/>
-                        <img src={userImg} alt="2"/>
-                        <img src={userImg} alt="3"/>
-                        <img src={userImg} alt="4"/>
+                    <div className="empty-state">
+                        <i className="fa-regular fa-image"></i>
+                        <span>Chưa có hình ảnh nào</span>
                     </div>
                 </div>
                 <div className="panel-section">
                     <div className="section-title">
                         <span>Tài liệu đã chia sẻ</span>
-                        <span className="count">2 file</span>
+                        <span className="count">0 file</span>
                     </div>
-                    <div className="shared-files-list">
-                        <div className="file-item">
-                            <i className="fa-solid fa-file-pdf file-icon pdf"></i>
-                            <div className="file-info">
-                                <span className="file-name">BaoCao_CuoiKy_LTFE.pdf</span>
-                                <span className="file-size">2.4 MB • 28/10/2026</span>
-                            </div>
-                        </div>
-                        <div className="file-item">
-                            <i className="fa-solid fa-file-lines file-icon docs"></i>
-                            <div className="file-info">
-                                <span className="file-name">PhanCongNhiemVu.docx</span>
-                                <span className="file-size">540 KB • Hôm qua</span>
-                            </div>
-                        </div>
+                    <div className="empty-state">
+                        <i className="fa-regular fa-folder-open"></i>
+                        <span>Chưa có tài liệu nào</span>
                     </div>
                 </div>
             </div>
