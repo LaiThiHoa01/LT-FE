@@ -8,6 +8,7 @@ import {logoutAPI} from "../../services/authService.ts";
 import {useAppDispatch} from "../../store/store.ts";
 import {addConnectUser} from "../../store/slices/chatSlice.ts";
 import {sendCheckUserExist} from "../../services/chatService.ts";
+import {clearAuth} from "../../store/slices/authSlice.ts";
 
 export default function Sidebar() {
     const dialogRef = useRef<HTMLDialogElement>(null);
@@ -79,7 +80,10 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
     }
     function handleLogout() {
         logoutAPI();
-        navigate('/login');
+        localStorage.removeItem("username");
+        localStorage.removeItem("RE_LOGIN_CODE");
+        dispatch(clearAuth());
+        navigate('/login', {replace:true});
     }
 
     const currentMyUsername = localStorage.getItem("username") || "Người dùng";

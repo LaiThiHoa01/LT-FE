@@ -4,7 +4,7 @@ import {handleChatUser, sendGetUserList} from "./chatService.ts";
 import {store} from "../store/store.ts";
 import {addRoom, removeRoom} from "../store/slices/chatSlice.ts";
 import {reLoginAPI} from "./authService.ts";
-import {clearRoom, getLeaveRoom} from "./roomService.ts";
+import {clearAuth, setAuth} from "../store/slices/authSlice.ts";
 let socket: WebSocket | null = null;
 export interface loginResponse{
     status: "success" | "error";
@@ -14,9 +14,19 @@ export interface loginResponse{
     };
     mes?: string;
 }
+export interface registerResponse{
+    status:"success"|"error";
+    event: "REGISTER";
+    data?: string;
+    mes?: string;
+}
 const loginLis: ((res: loginResponse)=>void) [] = [];
+const registerLis: ((res: registerResponse)=>void) [] = [];
 export function listenLogin(callback:(res: loginResponse)=>void) {
     loginLis.push(callback);
+}
+export function listenRegister(callback:(res:registerResponse)=>void){
+    registerLis.push(callback);
 }
 export function useWebSocket() {
     useEffect(() => {
@@ -31,12 +41,12 @@ export function useWebSocket() {
         socket.onopen = (event) => {
             if (!active || event.currentTarget !== socket) return;
             console.log("đã kết nối");
-            if (window.location.pathname.includes("/chat")) {
+            // if (window.location.pathname.includes("/chat")) {
                 const username = localStorage.getItem("username");
-                const password = localStorage.getItem("RE_LOGIN_CODE");
-                if (username && password) {
-                    reLoginAPI(username, password);
-                }
+                const code = localStorage.getItem("RE_LOGIN_CODE");
+                if (username && code) {
+                    reLoginAPI(username, code);
+                // }
             }
         };
         socket.onmessage = (event) => {
@@ -81,9 +91,10 @@ export function useWebSocket() {
                 console.warn("Phiên đăng nhập hết hạn", response.mes);
                 localStorage.removeItem("RE_LOGIN_CODE");
                 localStorage.removeItem("username");
-                if (window.location.pathname.includes("/chat")) {
-                    window.location.replace("/login");
-                }
+                store.dispatch(clearAuth());
+                // if (window.location.pathname.includes("/chat")) {
+                //     window.location.replace("/login");
+                // }
                 return;
             }
             if((response.event === "LOGIN" || response.event === "RE_LOGIN") && response.status === "success") {
@@ -91,6 +102,7 @@ export function useWebSocket() {
                 if(code){
                     localStorage.setItem("RE_LOGIN_CODE", code);
                 }
+                store.dispatch(setAuth());
                 sendGetUserList();
             }
             if (response.event === "LOGIN") {
@@ -98,6 +110,12 @@ export function useWebSocket() {
                     callback(response);
                 }
                 loginLis.length = 0;
+            }
+            if(response.event=="REGISTER"){
+                for(const callback of registerLis){
+                    callback(response);
+                }
+                registerLis.length=0;
             }
             handleChatUser(response);
         };

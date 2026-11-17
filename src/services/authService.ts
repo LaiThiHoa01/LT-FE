@@ -1,10 +1,10 @@
 import {getSocket} from "./websocketService.ts";
 
-export function registerAPI(username:string, password:string) {
+export function registerAPI(username:string, password:string):boolean {
     const socket = getSocket();
-    if(!socket){
+    if(!socket||socket.readyState!=WebSocket.OPEN){
         console.error("WebSocket chua san sang");
-        return;
+        return false;
     }
     const sendRegister = () => {
         socket.send(JSON.stringify({
@@ -21,6 +21,7 @@ export function registerAPI(username:string, password:string) {
     if (socket.readyState == WebSocket.OPEN) {
         sendRegister();
     }
+    return true;
 }
 export function loginAPI(username: string, password: string):boolean{
     const socket = getSocket();
