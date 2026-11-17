@@ -1,32 +1,36 @@
 import {createBrowserRouter} from "react-router";
 import SignIn from "../components/auth/signIn/SignIn.tsx";
-import {ChatLayout} from "./ChatLayout.tsx";
 import {ErrorPage} from "./ErrorPage.tsx";
 import SignUp from "../components/auth/signUp/SignUp.tsx";
 import {Layout} from "./Layout.tsx";
+import {PrivateRoute} from "./PrivateRoute.tsx";
+import {PublicRoute} from "./PublicRoute.tsx";
 
 export const router= createBrowserRouter([
     {
-        path:"/",
-        element: <Layout/>,
-        errorElement: <ErrorPage/>,
-        children: [
-            {
-                index: true,
-                element: <SignIn/>,
-            },
-            {
-                path: "login" ,
-                element: <SignIn/>,
-            },
-            {
-                path: "signUp",
-                element: <SignUp/>
-            },
-        ]
+        element: <PublicRoute/>,
+        children:[{
+            path: "/",
+            element: <Layout/>,
+            errorElement: <ErrorPage/>,
+            children: [
+                {
+                    index: true,
+                    element: <SignIn/>,
+                },
+                {
+                    path: "login",
+                    element: <SignIn/>,
+                },
+                {
+                    path: "signUp",
+                    element: <SignUp/>
+                },
+            ]
+        }]
     },
     {
         path: "chat",
-        element: <ChatLayout/>
+        element: <PrivateRoute/>
     }
 ])
