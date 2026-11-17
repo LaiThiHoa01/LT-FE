@@ -23,9 +23,11 @@ export function sendJoinRoom(name: string) {
     if (!roomName) return;
     sendGetPeopleMessages(roomName, 1, 1);
 }
+let leavingRoomName: string | null = null;
 export function sendOutRoom(name: string) {
     const roomName = name.trim();
     if (!roomName) return;
+    leavingRoomName = roomName;
     sendJsonMessage({
         action: "onchat",
         data: {
@@ -34,5 +36,12 @@ export function sendOutRoom(name: string) {
                 name : roomName,
             }
         }
-    })
+    });
+}
+
+export function getLeaveRoom(): string | null {
+    return leavingRoomName;
+}
+export function clearRoom(): void {
+    leavingRoomName = null;
 }

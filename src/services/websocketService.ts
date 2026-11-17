@@ -2,8 +2,9 @@ import { useEffect } from "react";
 import {handleChatUser, sendGetUserList} from "./chatService.ts";
 
 import {store} from "../store/store.ts";
-import {addRoom} from "../store/slices/chatSlice.ts";
+import {addRoom, removeRoom} from "../store/slices/chatSlice.ts";
 import {reLoginAPI} from "./authService.ts";
+import {clearRoom, getLeaveRoom} from "./roomService.ts";
 let socket: WebSocket | null = null;
 export interface loginResponse{
     status: "success" | "error";
@@ -65,8 +66,13 @@ export function useWebSocket() {
             }
             if (response.event === 'OUT_ROOM') {
                 if (response.status === 'success') {
+                    const roomName = (typeof response.data === 'string' ? response.data : response.data?.name) || getLeaveRoom();
+                    if (roomName)
+                        store.dispatch(removeRoom(roomName));
+                    clearRoom()
                     sendGetUserList();
                 } else {
+                    clearRoom();
                     const message = typeof response.mes === 'string' ? response.mes : 'Rời phòng thất bại.';
                     window.alert(message);
                 }
