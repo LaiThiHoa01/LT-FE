@@ -142,3 +142,17 @@
 .conversation p{
     color: #9ca3af;
 }
+
+.date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+}
+.date-separator span {
+    background: #e5e7eb;
+    color: #6b7280;
+    font-size: 12px;
+    padding: 3px 12px;
+    border-radius: 12px;
+}

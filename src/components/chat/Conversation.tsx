@@ -7,6 +7,19 @@ import {addMessage, toggleInfo} from '../../store/slices/chatSlice';
 import type { Message } from '../../types/chat';
 import { sendChatMessage, sendGetPeopleMessages } from '../../services/chatService.ts';
 
+const DAYS_VI = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+function getDateLabel(dateStr: string): string {
+    const today = new Date();
+    const todayStr = today.toISOString().slice(0, 10);
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+    if (!dateStr || dateStr === todayStr) return 'Hôm nay';
+    if (dateStr === yesterdayStr) return 'Hôm qua';
+    const d = new Date(dateStr);
+    return `${DAYS_VI[d.getDay()]} ${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+}
+
 export default function Conversation() {
     const dispatch = useAppDispatch();
     const [showPicker, setShowPicker] = useState(false);
@@ -39,20 +52,22 @@ export default function Conversation() {
     const sendMessage = () => {
         const text = inputText.trim();
         if(text && activeUser){
-            sendChatMessage(activeUser.name, text, activeUser.type === 1 ? "room" : "people");
+            const isSent = sendChatMessage(activeUser.name, text, activeUser.type === 1 ? "room" : "people");
             const myUsername = localStorage.getItem("username") || "me";
             const newMessage: Message = {
                 id: crypto.randomUUID(),
                 senderId: myUsername,
                 text: text,
                 time: new Date().toLocaleTimeString([], {hour: "2-digit", minute: "2-digit"}),
-                isMe: true
+                date: new Date().toISOString().slice(0, 10),
+                isMe: true,
+                status: isSent ? 'sent' : 'failed'
             };
             dispatch(addMessage({
                 conversationId: activeUser.id,
                 message: newMessage
             }));
-            setInputText("");
+            if (isSent) setInputText("");
         }
     }
 
@@ -90,17 +105,27 @@ export default function Conversation() {
                     </div>
                 </div>
                 <div className="message-list">
-                    {messages.map((msg) => (
-                        <div key={msg.id} className={msg.isMe ? "message my-message" : "message-receive other-message"}>
-                            {!msg.isMe && activeUser?.type === 1 && (
-                                <div style={{ fontSize: '11px', fontWeight: 600, color: '#0068ff', marginBottom: '2px' }}>
-                                    {msg.senderId}
+                    {messages.map((msg, idx) => {
+                        const showSeparator = idx === 0 || msg.date !== messages[idx - 1].date;
+                        return (
+                            <div key={msg.id}>
+                                {showSeparator && (
+                                    <div className="date-separator">
+                                        <span>{getDateLabel(msg.date || '')}</span>
+                                    </div>
+                                )}
+                                <div className={msg.isMe ? "message my-message" : "message-receive other-message"}>
+                                    {!msg.isMe && activeUser?.type === 1 && (
+                                        <div style={{ fontSize: '11px', fontWeight: 600, color: '#0068ff', marginBottom: '2px' }}>
+                                            {msg.senderId}
+                                        </div>
+                                    )}
+                                    <span>{msg.text}</span>
+                                    <div className="time-send"> {msg.time}{msg.status === 'failed' && <span style={{ color: '#ef4444', marginLeft: '6px' }}>(Gửi thất bại)</span>}</div>
                                 </div>
-                            )}
-                            <span>{msg.text}</span>
-                            <div className="time-send"> {msg.time}</div>
-                        </div>
-                    ))}
+                            </div>
+                        );
+                    })}
                     <div ref={messagesEndRef} />
                 </div>
                 {showPicker && (

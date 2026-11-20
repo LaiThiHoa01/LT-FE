@@ -11,7 +11,9 @@ export interface Message {
     senderId: number | string;
     text: string;
     time: string;
+    date?: string;
     isMe: boolean;
+    status?: 'sent' | 'failed';
 }
 export interface UserItem extends ChatUser {
     lastMessage?: string;

@@ -67,8 +67,8 @@ export function sendCheckUserExist(username: string, callback?: (isExist: boolea
     });
 }
 // gửi tn
-export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people") {
-    sendJsonMessage({
+export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people"): boolean {
+    return sendJsonMessage({
         action: "onchat",
         data: {
             event: "SEND_CHAT",
@@ -201,8 +201,10 @@ export function handleChatUser(response: any ){
             const conversationId = getConversationId(partnerName, 0);
             const messages: Message[] = rawList.map(item => {
                 let timeStr = "";
+                let dateStr = "";
                 if (item.createAt) {
                     const parts = item.createAt.split(" ");
+                    dateStr = parts[0] || "";
                     timeStr = parts[1] ? parts[1].slice(0, 5) : item.createAt;
                 }
                 return {
@@ -210,6 +212,7 @@ export function handleChatUser(response: any ){
                     senderId: item.name,
                     text: decodeEmoji(item.mes),
                     time: timeStr,
+                    date: dateStr,
                     isMe: item.name === myUsername,
                 };
             });
