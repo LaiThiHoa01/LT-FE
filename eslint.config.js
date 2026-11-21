@@ -3,12 +3,16 @@ import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 
 export default [
+    { ignores: ["dist/**"] },
     js.configs.recommended,
     ...tseslint.configs.recommended,
     pluginReact.configs.flat.recommended,
     pluginReact.configs.flat['jsx-runtime'],
     {
         files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
+        settings: {
+            react: { version: 'detect' },
+        },
         rules: {
             'no-var': 'off',
             'prefer-const': 'off',

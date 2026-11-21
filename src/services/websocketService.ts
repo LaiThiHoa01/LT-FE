@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import {handleChatUser, sendGetUserList} from "./chatService.ts";
 
 import {store} from "../store/store.ts";
-import {addRoom, removeRoom} from "../store/slices/chatSlice.ts";
+import {addRoom, removeRoom, resetChat} from "../store/slices/chatSlice.ts";
 import {reLoginAPI} from "./authService.ts";
 import {clearAuth, setAuth} from "../store/slices/authSlice.ts";
-import {clearRoom, getLeaveRoom} from "./roomService.ts";
+import {clearRoom, getLeaveRoom, resetRoomState} from "./roomService.ts";
 let socket: WebSocket | null = null;
 export interface loginResponse{
     status: "success" | "error";
@@ -77,21 +77,26 @@ export function useWebSocket() {
             }
             if (response.event === 'OUT_ROOM') {
                 if (response.status === 'success') {
-                    const roomName = (typeof response.data === 'string' ? response.data : response.data?.name) || getLeaveRoom();
-                    if (roomName)
+                    const serverRoomName = typeof response.data === 'object' && response.data !== null ? response.data.name : undefined;
+                    const roomName = getLeaveRoom() || (typeof serverRoomName === 'string' ? serverRoomName.trim() : '');
+                    clearRoom(roomName);
+                    if (roomName) {
                         store.dispatch(removeRoom(roomName));
-                    clearRoom()
+                    }
                     sendGetUserList();
                 } else {
                     clearRoom();
                     const message = typeof response.mes === 'string' ? response.mes : 'Rời phòng thất bại.';
                     window.alert(message);
                 }
+                return;
             }
             if (response.event === "RE_LOGIN" && response.status === "error") {
                 console.warn("Phiên đăng nhập hết hạn", response.mes);
+                resetRoomState();
                 localStorage.removeItem("RE_LOGIN_CODE");
                 localStorage.removeItem("username");
+                store.dispatch(resetChat());
                 store.dispatch(clearAuth());
                 // if (window.location.pathname.includes("/chat")) {
                 //     window.location.replace("/login");
@@ -128,6 +133,10 @@ export function useWebSocket() {
         socket.onclose = (event) => {
             if (!active || event.currentTarget !== socket) return;
             console.warn("ngắt kết nối", event.code, event.reason);
+            if (getLeaveRoom()) {
+                clearRoom();
+                window.alert("Đã xảy ra lỗi kết nối !");
+            }
             socket = null;
             if (reconnectTimer === null) {
                 reconnectTimer = setTimeout(() => {
