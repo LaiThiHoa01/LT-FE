@@ -1,6 +1,8 @@
 import {getSocket, sendJsonMessage} from './websocketService.ts';
 import {sendGetPeopleMessages} from './chatService.ts';
 
+let leavingRoomName: string | null = null;
+const leftRooms = new Set<string>();
 export function createRoomAPI(name: string) {
     const roomName = name.trim();
     if (!roomName) throw new Error('Nhập tên phòng.');
@@ -10,6 +12,7 @@ export function createRoomAPI(name: string) {
         throw new Error('WebSocket chưa sẵn sàng.');
     }
 
+    leftRooms.delete(roomName);
     socket.send(JSON.stringify({
         action: 'onchat',
         data: {
@@ -21,14 +24,15 @@ export function createRoomAPI(name: string) {
 export function sendJoinRoom(name: string) {
     const roomName = name.trim();
     if (!roomName) return;
+    leftRooms.delete(roomName);
     sendGetPeopleMessages(roomName, 1, 1);
 }
-let leavingRoomName: string | null = null;
-export function sendOutRoom(name: string) {
+export function sendOutRoom(name: string): boolean {
     const roomName = name.trim();
-    if (!roomName) return;
+    if (!roomName) return false;
+    if (leavingRoomName === roomName) return true;
     leavingRoomName = roomName;
-    sendJsonMessage({
+    const isSent = sendJsonMessage({
         action: "onchat",
         data: {
             event: "OUT_ROOM",
@@ -37,11 +41,21 @@ export function sendOutRoom(name: string) {
             }
         }
     });
+    if (!isSent) {
+        leavingRoomName = null;
+    }
+    return isSent;
 }
 
 export function getLeaveRoom(): string | null {
     return leavingRoomName;
 }
-export function clearRoom(): void {
+export function clearRoom(leftRoomName?: string): void {
+    if (leftRoomName?.trim()) {
+        leftRooms.add(leftRoomName.trim());
+    }
     leavingRoomName = null;
+}
+export function isRoomLeft(name: string): boolean {
+    return leftRooms.has(name.trim());
 }

@@ -15,8 +15,10 @@ export default function UserInfo() {
         if (!activeTarget) return;
         const confirmLeave = window.confirm(`Bạn có chắc muốn rời nhóm "${activeTarget.name}" không?`);
         if (confirmLeave) {
-            sendOutRoom(activeTarget.name);
-            dispatch(closeInfo());
+            const isSent = sendOutRoom(activeTarget.name);
+            if (!isSent) {
+                window.alert("Đã xảy ra lỗi kết nối !");
+            }
         }
     };
     return (

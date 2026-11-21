@@ -41,12 +41,15 @@ const chatSlice = createSlice({
             selectConversation(state, id);
         },
         removeRoom: (state, action: PayloadAction<string>) => {
-            const roomName = action.payload;
+            const roomName = action.payload.trim();
             const id = getConversationId(roomName, 1);
-            state.users = state.users.filter(user => user.id !== id && !(user.name === roomName && user.type === 1));
+            state.users = state.users.filter(user => user.id !== id && !(user.name.trim() === roomName && user.type === 1));
             delete state.messagesByUser[id];
-            if (state.activeConversationId === id || (state.activeTarget?.name === roomName && state.activeTarget?.type === 1)) {
+            if (state.activeConversationId === id || (state.activeTarget?.name.trim() === roomName && state.activeTarget?.type === 1)) {
                 const nextUser = state.users[0] ?? null;
+                if (nextUser) {
+                    nextUser.unreadCount = 0;
+                }
                 state.activeConversationId = nextUser?.id ?? null;
                 state.activeTarget = nextUser ? { ...nextUser } : null;
                 state.isInfoOpen = false;

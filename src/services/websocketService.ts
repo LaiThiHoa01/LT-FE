@@ -77,16 +77,19 @@ export function useWebSocket() {
             }
             if (response.event === 'OUT_ROOM') {
                 if (response.status === 'success') {
-                    const roomName = (typeof response.data === 'string' ? response.data : response.data?.name) || getLeaveRoom();
-                    if (roomName)
+                    const serverRoomName = typeof response.data === 'object' && response.data !== null ? response.data.name : undefined;
+                    const roomName = getLeaveRoom() || (typeof serverRoomName === 'string' ? serverRoomName.trim() : '');
+                    clearRoom(roomName);
+                    if (roomName) {
                         store.dispatch(removeRoom(roomName));
-                    clearRoom()
+                    }
                     sendGetUserList();
                 } else {
                     clearRoom();
                     const message = typeof response.mes === 'string' ? response.mes : 'Rời phòng thất bại.';
                     window.alert(message);
                 }
+                return;
             }
             if (response.event === "RE_LOGIN" && response.status === "error") {
                 console.warn("Phiên đăng nhập hết hạn", response.mes);
@@ -128,6 +131,10 @@ export function useWebSocket() {
         socket.onclose = (event) => {
             if (!active || event.currentTarget !== socket) return;
             console.warn("ngắt kết nối", event.code, event.reason);
+            if (getLeaveRoom()) {
+                clearRoom();
+                window.alert("Đã xảy ra lỗi kết nối !");
+            }
             socket = null;
             if (reconnectTimer === null) {
                 reconnectTimer = setTimeout(() => {
