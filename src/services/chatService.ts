@@ -4,7 +4,7 @@ import {addMessage, addRoom, getConversationId, setMessages, setOnlineStatus, se
 import {store} from "../store/store.ts";
 import {isRoomLeft} from "./roomService.ts";
 
-let currentUser : string | null = null;
+const onlineCheckQueue: string[] = [];
 let currentChatTarget: { name: string; type: ChatType } | null = null;
 export function encodeEmoji(text: string): string {
     if (!text) {
@@ -32,7 +32,7 @@ export function decodeEmoji(text: string): string {
         return String.fromCodePoint(codeNumber);
     });
 }
-let checkUserExist: ((isExist: boolean) => void) | null = null;
+let checkUserExist: ((isExist: boolean, hasError?: boolean) => void) | null = null;
 
 export function sendGetUserList(){
     sendJsonMessage({
@@ -44,20 +44,22 @@ export function sendGetUserList(){
     })
 }
 export function sendCheckUserOnline(username : string){
-    currentUser = username;
-    sendJsonMessage({
+    const trimmed = username.trim();
+    if (!trimmed || onlineCheckQueue.includes(trimmed)) return;
+    if (sendJsonMessage({
         action: "onchat",
         data: {
             event: "CHECK_USER_ONLINE",
             data: {
-                user: username,
+                user: trimmed,
             }
         }
-    })
+    }))
+    onlineCheckQueue.push(trimmed);
 }
-export function sendCheckUserExist(username: string, callback?: (isExist: boolean) => void) {
-    checkUserExist = callback || null;
-    sendJsonMessage({
+export function sendCheckUserExist(username: string, callback?: (isExist: boolean, hasError?: boolean) => void) {
+    if (!callback) return;
+    const isSent = sendJsonMessage({
         action: "onchat",
         data: {
             event: "CHECK_USER_EXIST",
@@ -66,6 +68,20 @@ export function sendCheckUserExist(username: string, callback?: (isExist: boolea
             }
         }
     });
+    if (!isSent) {
+        callback(false, true);
+        return;
+    }
+    const timer = setTimeout(() => {
+        if (checkUserExist) {
+            checkUserExist = null;
+            callback(false, true);
+        }
+    }, 5000);
+    checkUserExist = (isExist, hasError) => {
+        clearTimeout(timer);
+        callback(isExist, hasError);
+    };
 }
 // gửi tn
 export function sendChatMessage(to: string, mes: string, type: "people" | "room" = "people"): boolean {
@@ -118,7 +134,18 @@ export function sendGetPeopleMessages(name: string, page = 1, type: ChatType = 0
 export function handleChatUser(response: any ){
     if(!response) return;
     if(response.status === "error"){
-        console.error(response.error);
+        console.error(response.mes || response.error);
+        if (response.event === "CHECK_USER_ONLINE") {
+            const targetUser = onlineCheckQueue.shift();
+            if (targetUser) {
+                store.dispatch(setOnlineStatus({ name: targetUser, isOnline: false }));
+            }
+        }
+        if (checkUserExist && (response.event === "CHECK_USER_EXIST" || !response.event)) {
+            const callback = checkUserExist;
+            checkUserExist = null;
+            callback(false, true);
+        }
         return;
     }
     if(response.status !== "success") return;
@@ -128,6 +155,11 @@ export function handleChatUser(response: any ){
             const rawList: RoomUserItem[] = Array.isArray(response.data) ? response.data : [];
             const list = rawList.filter(item => !(item.type === 1 && isRoomLeft(item.name)));
             store.dispatch(setUserlist(list));
+            for (const item of list) {
+                if (item.type === 0 && item.name) {
+                    sendCheckUserOnline(item.name);
+                }
+            }
             const currentActive = store.getState().chat.activeTarget;
             if (currentActive?.name) {
                 sendGetPeopleMessages(currentActive.name, 1, currentActive.type);
@@ -135,12 +167,12 @@ export function handleChatUser(response: any ){
             break;
         }
         case "CHECK_USER_ONLINE": {
-            if(currentUser){
+            const targetUser = onlineCheckQueue.shift();
+            if (targetUser) {
                 store.dispatch(setOnlineStatus({
-                    name: currentUser,
-                    isOnline: response.data.status,
+                    name: targetUser,
+                    isOnline: Boolean(response.data?.status),
                 }));
-                currentUser = null;
             }
             break;
         }
@@ -226,9 +258,9 @@ export function handleChatUser(response: any ){
         }
         case "CHECK_USER_EXIST": {
             if (checkUserExist) {
-                const isExist = response.data?.status === true;
-                checkUserExist(isExist);
+                const callback = checkUserExist;
                 checkUserExist = null;
+                callback(response.data?.status === true);
             }
             break;
         }

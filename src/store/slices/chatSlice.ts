@@ -82,7 +82,7 @@ const chatSlice = createSlice({
                     isOnline: item.isOnline ?? previous?.isOnline ?? false,
                     unreadCount: previous?.unreadCount ?? 0,
                     lastMessage: previous?.lastMessage,
-                    time: previous?.time ?? item.actionTime,
+                    time: item.actionTime || previous?.time,
                 };
             });
             state.users = newUsers;
@@ -150,7 +150,7 @@ const chatSlice = createSlice({
                 }
             }
             user.lastMessage = text;
-            user.time = message.time;
+            user.time = new Date().toISOString();
             if (!message.isMe && state.activeConversationId !== conversationId) {
                 user.unreadCount = (user.unreadCount || 0) + 1;
             }
@@ -168,7 +168,6 @@ const chatSlice = createSlice({
                 const user = state.users.find(u => u.id === conversationId);
                 if (user && !user.lastMessage) {
                     user.lastMessage = lastMsg.text;
-                    user.time = lastMsg.time;
                 }
             }
         },

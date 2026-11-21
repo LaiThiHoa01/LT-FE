@@ -7,7 +7,7 @@ import {useNavigate} from "react-router";
 import {logoutAPI} from "../../services/authService.ts";
 import {useAppDispatch} from "../../store/store.ts";
 import {addConnectUser} from "../../store/slices/chatSlice.ts";
-import {sendCheckUserExist} from "../../services/chatService.ts";
+import {sendCheckUserExist, sendCheckUserOnline} from "../../services/chatService.ts";
 import {clearAuth} from "../../store/slices/authSlice.ts";
 
 export default function Sidebar() {
@@ -52,6 +52,7 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         }
     }
     function openAddUser() {
+        setIsChecking(false);
         setAddUsername('');
         setAddUserError('');
         addUserDialogRef.current?.showModal();
@@ -61,17 +62,20 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
         event.preventDefault();
         const targetUser = addUsername.trim();
         const myUsername = localStorage.getItem("username");
-        if (!targetUser) return;
+        if (!targetUser || isChecking) return;
         if (targetUser === myUsername) {
             setAddUserError("Bạn không thể tự kết bạn với chính mình!");
             return;
         }
         setIsChecking(true);
         setAddUserError('');
-        sendCheckUserExist(targetUser, (isExist) => {
+        sendCheckUserExist(targetUser, (isExist, hasError) => {
             setIsChecking(false);
-            if (isExist) {
+            if (hasError) {
+                setAddUserError("Đã xảy ra lỗi kết nối. Vui lòng thử lại!");
+            } else if (isExist) {
                 dispatch(addConnectUser(targetUser));
+                sendCheckUserOnline(targetUser);
                 addUserDialogRef.current?.close();
             } else {
                 setAddUserError(`Tài khoản "${targetUser}" không tồn tại!`);
@@ -146,7 +150,7 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                     </div>
                 </form>
             </dialog>
-            <dialog ref={addUserDialogRef} className="create-room-dialog" aria-labelledby="add-user-title">
+            <dialog ref={addUserDialogRef} className="create-room-dialog" aria-labelledby="add-user-title" onClose={() => setIsChecking(false)}>
                 <form onSubmit={handleAddUsername}>
                     <h2 id="add-user-title">Nhắn tin với người dùng</h2>
                     <label htmlFor="add-user-name">Username bạn bè</label>

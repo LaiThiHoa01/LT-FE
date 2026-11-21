@@ -6,7 +6,7 @@ export default function User({user, isSelected}: { user: UserItem; isSelected?: 
         if (!timeString) return "";
         const actionTime = new Date(timeString.replace(" ", "T")).getTime();
 
-        if (isNaN(actionTime)) return timeString;
+        if (isNaN(actionTime)) return "";
         const now = Date.now();
         const elapsedTime = now - actionTime;
 
