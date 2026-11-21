@@ -24,6 +24,10 @@ export function createRoomAPI(name: string) {
 export function sendJoinRoom(name: string) {
     const roomName = name.trim();
     if (!roomName) return;
+    const socket = getSocket();
+    if (!socket || socket.readyState !== WebSocket.OPEN) {
+        throw new Error('WebSocket chưa sẵn sàng');
+    }
     leftRooms.delete(roomName);
     sendGetPeopleMessages(roomName, 1, 1);
 }
@@ -58,4 +62,8 @@ export function clearRoom(leftRoomName?: string): void {
 }
 export function isRoomLeft(name: string): boolean {
     return leftRooms.has(name.trim());
+}
+export function resetRoomState(): void {
+    leavingRoomName = null;
+    leftRooms.clear();
 }

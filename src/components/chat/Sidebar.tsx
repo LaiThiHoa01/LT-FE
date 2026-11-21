@@ -1,12 +1,12 @@
 import ListUser from "./ListUser.tsx";
 import "./Sidebar.css"
 import avatarImg from '../../assets/woman_7185906.png'
-import {createRoomAPI, sendJoinRoom} from "../../services/roomService.ts";
+import {createRoomAPI, resetRoomState, sendJoinRoom} from "../../services/roomService.ts";
 import {type SubmitEvent, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import {logoutAPI} from "../../services/authService.ts";
 import {useAppDispatch} from "../../store/store.ts";
-import {addConnectUser} from "../../store/slices/chatSlice.ts";
+import {addConnectUser, resetChat} from "../../store/slices/chatSlice.ts";
 import {sendCheckUserExist, sendCheckUserOnline} from "../../services/chatService.ts";
 import {clearAuth} from "../../store/slices/authSlice.ts";
 
@@ -48,7 +48,7 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
             sendJoinRoom(joinRoomName);
             joinDialogRef.current?.close();
         } catch (error) {
-            window.alert('Tham gia phòng thất bại.');
+            window.alert(error instanceof Error ? error.message : 'Tham gia phòng thất bại.');
         }
     }
     function openAddUser() {
@@ -84,8 +84,10 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
     }
     function handleLogout() {
         logoutAPI();
+        resetRoomState();
         localStorage.removeItem("username");
         localStorage.removeItem("RE_LOGIN_CODE");
+        dispatch(resetChat());
         dispatch(clearAuth());
         navigate('/login', {replace:true});
     }
@@ -107,7 +109,7 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                         <button type="button" className="action-btn" title="Tham gia phòng" onClick={openJoinRoom}>
                             <i className="fa-solid fa-door-open"></i>
                         </button>
-                        <button className="action-btn" title="Thêm người dùng" onClick={openAddUser}>
+                        <button type="button" className="action-btn" title="Thêm người dùng" onClick={openAddUser}>
                             <i className="fa-solid fa-user-plus"></i>
                         </button>
                     </div>
@@ -129,7 +131,7 @@ function handleCreateRoom(event: SubmitEvent<HTMLFormElement>) {
                 <form onSubmit={handleCreateRoom}>
                     <h2 id="create-room-title">Tạo nhóm mới</h2>
                     <label htmlFor="create-room-name">Tên phòng</label>
-                    <input id="create-room-name" placeholder="Nhaapj tên phòng" value={roomName} onChange={e => {setRoomName(e.target.value); setRoomError('')}} required/>
+                    <input id="create-room-name" placeholder="Nhập tên phòng" value={roomName} onChange={e => {setRoomName(e.target.value); setRoomError('')}} required/>
                     {roomError && (
                         <p className="create-room-error" role="alert">{roomError}</p>
                     )}

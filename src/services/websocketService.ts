@@ -2,10 +2,10 @@ import { useEffect } from "react";
 import {handleChatUser, sendGetUserList} from "./chatService.ts";
 
 import {store} from "../store/store.ts";
-import {addRoom, removeRoom} from "../store/slices/chatSlice.ts";
+import {addRoom, removeRoom, resetChat} from "../store/slices/chatSlice.ts";
 import {reLoginAPI} from "./authService.ts";
 import {clearAuth, setAuth} from "../store/slices/authSlice.ts";
-import {clearRoom, getLeaveRoom} from "./roomService.ts";
+import {clearRoom, getLeaveRoom, resetRoomState} from "./roomService.ts";
 let socket: WebSocket | null = null;
 export interface loginResponse{
     status: "success" | "error";
@@ -93,8 +93,10 @@ export function useWebSocket() {
             }
             if (response.event === "RE_LOGIN" && response.status === "error") {
                 console.warn("Phiên đăng nhập hết hạn", response.mes);
+                resetRoomState();
                 localStorage.removeItem("RE_LOGIN_CODE");
                 localStorage.removeItem("username");
+                store.dispatch(resetChat());
                 store.dispatch(clearAuth());
                 // if (window.location.pathname.includes("/chat")) {
                 //     window.location.replace("/login");
